@@ -1,0 +1,11 @@
+<div class="space-y-2">
+  {% for item in fixed_expenses %}
+  <form method="post" action="/expenses/save" class="grid grid-cols-4 gap-2">
+    <input type="hidden" name="item_id" value="{{item.id}}">
+    <input name="name" value="{{item.name}}" class="field">
+    <input name="amount_monthly" type="number" step="0.01" value="{{item.amount_monthly}}" class="field">
+    <input name="due_day" type="number" value="{{item.due_day or ''}}" class="field">
+    <div class="flex gap-2"><button class="btn">Edit</button><button formaction="/fixed_expenses/delete/{{item.id}}" class="btn">Delete</button></div>
+  </form>
+  {% endfor %}
+</div>

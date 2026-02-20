@@ -1,0 +1,1 @@
+"""Minimal Budget Hub package."""

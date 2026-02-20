@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6 border border-black/10 rounded-xl p-8">
+  {% if step == 0 %}
+    <p class="text-sm">Step 1 of 4</p>
+    <h1 class="text-4xl font-semibold">Welcome to your budget.</h1>
+    <a href="/onboarding/1" class="inline-block border border-black px-5 py-2 rounded-lg hover:bg-black hover:text-white transition">Get started</a>
+  {% elif step == 1 %}
+    <p class="text-sm">Step 2 of 4</p>
+    <h2 class="text-2xl font-semibold">Accounts setup</h2>
+    <div class="flex gap-2 flex-wrap">
+      {% for s in ["Checking", "HYSA", "Roth IRA", "Brokerage", "401k", "Cash"] %}
+      <form method="post" action="/accounts/save"><input type="hidden" name="name" value="{{s}}"><input type="hidden" name="type" value="{{s}}"><input type="hidden" name="starting_balance" value="0"><button class="chip">+ {{s}}</button></form>
+      {% endfor %}
+    </div>
+    <form method="post" action="/accounts/save" class="grid grid-cols-3 gap-3">
+      <input name="name" placeholder="name" class="field" required>
+      <input name="type" placeholder="type" class="field" required>
+      <input name="starting_balance" placeholder="startingBalance" type="number" step="0.01" class="field" required>
+      <button class="btn col-span-3">Save account</button>
+    </form>
+    {% include "partials/account_list.html" %}
+    <a href="/onboarding/2" class="btn">Next</a>
+  {% elif step == 2 %}
+    <p class="text-sm">Step 3 of 4</p>
+    <h2 class="text-2xl font-semibold">Debts setup</h2>
+    <div class="flex gap-2 flex-wrap">
+      {% for s in ["Credit Card", "Car Loan", "Student Loans", "Mortgage", "Personal Loan"] %}
+      <form method="post" action="/debts/save"><input type="hidden" name="name" value="{{s}}"><input type="hidden" name="balance" value="0"><button class="chip">+ {{s}}</button></form>
+      {% endfor %}
+    </div>
+    <form method="post" action="/debts/save" class="grid grid-cols-4 gap-3">
+      <input name="name" placeholder="name" class="field" required>
+      <input name="balance" placeholder="balance" type="number" step="0.01" class="field" required>
+      <input name="minimum_payment" placeholder="minimumPayment(optional)" type="number" step="0.01" class="field">
+      <input name="interest_rate" placeholder="interestRate(optional)" type="number" step="0.01" class="field">
+      <button class="btn col-span-4">Save debt</button>
+    </form>
+    {% include "partials/debt_list.html" %}
+    <a href="/onboarding/3" class="btn">Next</a>
+  {% elif step == 3 %}
+    <p class="text-sm">Step 4 of 4</p>
+    <h2 class="text-2xl font-semibold">Fixed monthly expenses</h2>
+    <div class="flex gap-2 flex-wrap">
+      {% for s in ["Rent", "Utilities", "Gym", "Phone", "Subscriptions", "Insurance"] %}
+      <form method="post" action="/expenses/save"><input type="hidden" name="name" value="{{s}}"><input type="hidden" name="amount_monthly" value="0"><button class="chip">+ {{s}}</button></form>
+      {% endfor %}
+    </div>
+    <form method="post" action="/expenses/save" class="grid grid-cols-3 gap-3">
+      <input name="name" placeholder="name" class="field" required>
+      <input name="amount_monthly" placeholder="amountMonthly" type="number" step="0.01" class="field" required>
+      <input name="due_day" placeholder="dueDay(optional)" type="number" class="field">
+      <button class="btn col-span-3">Save fixed expense</button>
+    </form>
+    {% include "partials/expense_list.html" %}
+    <form method="post" action="/onboarding/finish"><button class="btn">Finish</button></form>
+  {% endif %}
+</div>
+{% endblock %}
