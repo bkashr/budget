@@ -60,3 +60,24 @@ On first run, it will initialize SQLite schema and launch setup automatically.
 - Dates use `YYYY-MM-DD`.
 - Top-level category allocation must remain valid at 100%.
 - Subcategories are supported via `parent_id` and can have `0%` allocations.
+
+
+## GitHub Pages + remote workflow
+- This project is a CLI app, so GitHub Pages cannot run the Python program directly.
+- The `docs/index.html` page is an interactive **visual prototype** for planning/editing the product UI in-browser.
+- Prototype data is browser-only (localStorage) and is separate from your real Python + SQLite app data.
+- For remote development without installing VS Code locally, use GitHub Codespaces.
+
+### Recommended setup
+1. In GitHub: **Settings → Pages**.
+2. Under **Build and deployment**, choose **Deploy from a branch**.
+3. Select your branch and the **`/docs`** folder.
+4. Open the published Pages site to review/edit the visual prototype behavior.
+5. Open **Code → Codespaces** and create a codespace for real app development.
+6. In the codespace terminal run:
+
+```bash
+python budget_program/main.py
+```
+
+If you want the hosted site itself to have full functionality, convert this CLI to a web app (e.g., Streamlit/Flask) and deploy on a Python host such as Render or Railway.
