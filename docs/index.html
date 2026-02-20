@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Budget App Visual Prototype</title>
+    <style>
+      :root {
+        --bg: #f3f6fb;
+        --card: #ffffff;
+        --text: #111827;
+        --muted: #4b5563;
+        --primary: #2563eb;
+        --ok: #166534;
+        --warn: #9a3412;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .page {
+        max-width: 1080px;
+        margin: 2rem auto;
+        padding: 0 1rem 2rem;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      }
+      .hero { margin-bottom: 1rem; }
+      .hero p { color: var(--muted); }
+      .tag {
+        display: inline-block;
+        padding: .2rem .55rem;
+        border-radius: 99px;
+        font-size: .8rem;
+        background: #e0e7ff;
+        color: #3730a3;
+      }
+      .grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+      h1, h2, h3 { margin: .3rem 0 .6rem; }
+      h2 { font-size: 1.05rem; }
+      .stat { font-size: 1.7rem; font-weight: 800; }
+      .muted { color: var(--muted); }
+      .pill {
+        display: inline-block;
+        border-radius: 6px;
+        background: #ecfeff;
+        color: #155e75;
+        padding: .2rem .45rem;
+        font-size: .78rem;
+        margin-right: .3rem;
+      }
+      .controls {
+        display: grid;
+        gap: .6rem;
+        margin-top: .4rem;
+      }
+      input, select, button {
+        width: 100%;
+        padding: .55rem .6rem;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: .95rem;
+      }
+      button {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button.secondary { background: #111827; }
+      button.warn { background: #b91c1c; }
+      ul { margin: .4rem 0 0; padding-left: 1rem; }
+      li { margin: .28rem 0; }
+      .ok { color: var(--ok); font-weight: 700; }
+      .warn-text { color: var(--warn); font-weight: 700; }
+      .footer { margin-top: 1rem; }
+      .kicker { font-size: .9rem; color: var(--muted); }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+      @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="card hero">
+        <span class="tag">GitHub Pages Prototype</span>
+        <h1>Personal Budget — Visual Draft</h1>
+        <p>
+          This page is a <strong>visual simulation</strong> of your CLI workflow so you can view/edit your concept on GitHub Pages.
+          It uses browser-only mock data (localStorage), not Python + SQLite execution.
+        </p>
+        <p class="kicker">Want real functionality? Keep using Codespaces for the CLI, or convert to Streamlit/Flask for full web hosting.</p>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Dashboard</h2>
+          <div class="stat" id="balanceStat">$0.00</div>
+          <p class="muted">Estimated available balance after mock entries.</p>
+          <p>
+            <span class="pill" id="paychecksCount">0 paychecks</span>
+            <span class="pill" id="expensesCount">0 expenses</span>
+          </p>
+          <p id="budgetState" class="ok">Allocation total is valid (100%).</p>
+        </article>
+
+        <article class="card">
+          <h2>Top-level categories</h2>
+          <div id="categoriesList"></div>
+          <p class="muted">Tip: keep total at 100% to match CLI validation rules.</p>
+        </article>
+
+        <article class="card">
+          <h2>Add paycheck (mock)</h2>
+          <div class="controls">
+            <input type="number" step="0.01" id="paycheckAmount" placeholder="Net paycheck amount" />
+            <button id="addPaycheckBtn">Add paycheck</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Add expense (mock)</h2>
+          <div class="controls">
+            <div class="row">
+              <select id="expenseCategory"></select>
+              <input type="number" step="0.01" id="expenseAmount" placeholder="Expense amount" />
+            </div>
+            <button id="addExpenseBtn">Add expense</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Recent activity</h2>
+          <ul id="activity"></ul>
+        </article>
+
+        <article class="card">
+          <h2>Prototype controls</h2>
+          <p class="muted">Use this for planning and UI iteration on Pages.</p>
+          <div class="controls">
+            <button class="secondary" id="seedBtn">Load sample data</button>
+            <button class="warn" id="resetBtn">Reset mock data</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="card footer">
+        <h3>Remote workflow</h3>
+        <ul>
+          <li>Use this page on GitHub Pages to visualize features and edit static UI ideas.</li>
+          <li>Use GitHub Codespaces to run the actual Python CLI: <code>python budget_program/main.py</code>.</li>
+        </ul>
+      </section>
+    </main>
+
+    <script>
+      const STORAGE_KEY = 'budget-pages-prototype-v1';
+      const defaultState = {
+        categories: [
+          { name: 'Savings & Debt', pct: 40 },
+          { name: 'Groceries', pct: 20 },
+          { name: 'Entertainment', pct: 15 },
+          { name: 'Clothing', pct: 10 },
+          { name: 'Misc', pct: 15 }
+        ],
+        paychecks: [],
+        expenses: []
+      };
+
+      function loadState() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return JSON.parse(JSON.stringify(defaultState));
+        try { return JSON.parse(raw); } catch { return JSON.parse(JSON.stringify(defaultState)); }
+      }
+
+      function saveState(state) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function money(v) { return `$${v.toFixed(2)}`; }
+
+      function render() {
+        const state = loadState();
+        const totalPay = state.paychecks.reduce((a, x) => a + x.amount, 0);
+        const totalExp = state.expenses.reduce((a, x) => a + x.amount, 0);
+        const available = totalPay - totalExp;
+
+        document.getElementById('balanceStat').textContent = money(available);
+        document.getElementById('paychecksCount').textContent = `${state.paychecks.length} paychecks`;
+        document.getElementById('expensesCount').textContent = `${state.expenses.length} expenses`;
+
+        const totalPct = state.categories.reduce((a, c) => a + Number(c.pct || 0), 0);
+        const budgetState = document.getElementById('budgetState');
+        if (Math.abs(totalPct - 100) <= 0.01) {
+          budgetState.className = 'ok';
+          budgetState.textContent = 'Allocation total is valid (100%).';
+        } else {
+          budgetState.className = 'warn-text';
+          budgetState.textContent = `Allocation total is ${totalPct.toFixed(2)}% (should be 100%).`;
+        }
+
+        const categoriesList = document.getElementById('categoriesList');
+        categoriesList.innerHTML = state.categories.map(c => `<li>${c.name}: ${c.pct}%</li>`).join('');
+        categoriesList.innerHTML = `<ul>${categoriesList.innerHTML}</ul>`;
+
+        const catSelect = document.getElementById('expenseCategory');
+        catSelect.innerHTML = state.categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+        const items = [];
+        state.paychecks.slice(-5).forEach(p => items.push({text:`Paycheck +${money(p.amount)}`, t: p.time}));
+        state.expenses.slice(-5).forEach(e => items.push({text:`Expense ${e.category} -${money(e.amount)}`, t: e.time}));
+        items.sort((a,b) => a.t - b.t).reverse();
+
+        const activity = document.getElementById('activity');
+        activity.innerHTML = items.length ? items.map(i => `<li>${i.text}</li>`).join('') : '<li>No activity yet.</li>';
+      }
+
+      function addPaycheck() {
+        const amount = Number(document.getElementById('paycheckAmount').value);
+        if (!amount || amount <= 0) return;
+        const state = loadState();
+        state.paychecks.push({ amount, time: Date.now() });
+        saveState(state);
+        document.getElementById('paycheckAmount').value = '';
+        render();
+      }
+
+      function addExpense() {
+        const amount = Number(document.getElementById('expenseAmount').value);
+        const category = document.getElementById('expenseCategory').value;
+        if (!amount || amount <= 0) return;
+        const state = loadState();
+        state.expenses.push({ amount, category, time: Date.now() });
+        saveState(state);
+        document.getElementById('expenseAmount').value = '';
+        render();
+      }
+
+      document.getElementById('addPaycheckBtn').addEventListener('click', addPaycheck);
+      document.getElementById('addExpenseBtn').addEventListener('click', addExpense);
+      document.getElementById('seedBtn').addEventListener('click', () => {
+        const state = loadState();
+        state.paychecks = [{ amount: 2600, time: Date.now() - 300000 }];
+        state.expenses = [
+          { amount: 120, category: 'Groceries', time: Date.now() - 200000 },
+          { amount: 45, category: 'Entertainment', time: Date.now() - 100000 }
+        ];
+        saveState(state);
+        render();
+      });
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEY);
+        render();
+      });
+
+      render();
+    </script>
+  </body>
+</html>
