@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<a href="/" class="underline text-sm">← Back to dashboard</a>
+<h1 class="text-2xl font-semibold capitalize my-4">{{section}}</h1>
+{% if section == 'accounts' %}
+  {% include "partials/account_list.html" %}
+{% elif section == 'debts' %}
+  {% include "partials/debt_list.html" %}
+{% elif section == 'fixed_expenses' %}
+  {% include "partials/expense_list.html" %}
+{% elif section == 'allocations' %}
+  <div class="card space-y-3">
+    <p class="text-sm">Enter rows as: target_type,target_id,percent. Percent total must equal 100.</p>
+    <form method="post" action="/allocations/save" class="space-y-2">
+      <textarea name="rows" rows="8" class="field">{% for a in allocations %}{{a.target_type}},{{a.target_id}},{{a.percent}}
+{% endfor %}</textarea>
+      <button class="btn">Save allocations</button>
+    </form>
+  </div>
+{% elif section == 'transactions' %}
+  <div class="space-y-2">
+    {% for tx in transactions %}<div class="card flex justify-between"><span>{{tx.type}} · {{tx.date_iso}}</span><span>${{ '%.2f'|format(tx.amount) }}</span></div>{% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

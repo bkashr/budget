@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<nav class="mb-6 flex gap-3 text-sm">
+  <a href="/manage/accounts" class="underline">Accounts</a>
+  <a href="/manage/debts" class="underline">Debts</a>
+  <a href="/manage/fixed_expenses" class="underline">Expenses</a>
+  <a href="/manage/allocations" class="underline">Allocations</a>
+  <a href="/manage/transactions" class="underline">Transactions</a>
+</nav>
+<h1 class="text-3xl font-semibold mb-4">Dashboard</h1>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+  <div class="card"><p>Total Assets</p><p class="text-xl">${{ '%.2f'|format(summary.assets) }}</p></div>
+  <div class="card"><p>Total Debts</p><p class="text-xl">${{ '%.2f'|format(summary.debts) }}</p></div>
+  <div class="card"><p>Net Worth</p><p class="text-xl">${{ '%.2f'|format(summary.net_worth) }}</p></div>
+  <div class="card"><p>Fixed Monthly Expenses</p><p class="text-xl">${{ '%.2f'|format(summary.fixed) }}</p></div>
+</div>
+<div class="grid md:grid-cols-2 gap-6">
+  <div class="card space-y-3">
+    <h2 class="font-semibold">Add Transaction</h2>
+    <form method="post" action="/transactions/income" class="space-y-2">
+      <p class="font-medium">INCOME</p>
+      <input name="amount" type="number" step="0.01" placeholder="amount" class="field" required>
+      <input name="date_iso" type="date" class="field" value="{{today}}">
+      <input name="note" placeholder="note/source optional" class="field">
+      <button class="btn">Save income</button>
+    </form>
+    <form method="post" action="/transactions/expense" class="space-y-2 pt-3 border-t border-black/10">
+      <p class="font-medium">EXPENSE</p>
+      <input name="amount" type="number" step="0.01" placeholder="amount" class="field" required>
+      <input name="date_iso" type="date" class="field" required>
+      <input name="category" placeholder="category optional" class="field">
+      <input name="account_id" placeholder="accountId optional" class="field">
+      <input name="note" placeholder="note optional" class="field">
+      <button class="btn">Save expense</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2 class="font-semibold mb-3">Recent transactions</h2>
+    <div class="space-y-2">
+      {% for tx in summary.transactions %}
+      <div class="border border-black/10 rounded p-2 flex justify-between text-sm"><span>{{tx.type}} · {{tx.date_iso}}</span><span>${{ '%.2f'|format(tx.amount) }}</span></div>
+      {% else %}
+      <p class="text-sm">No transactions yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
