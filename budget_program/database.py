@@ -97,9 +97,22 @@ def init_db() -> None:
             date TEXT NOT NULL,
             amount REAL NOT NULL,
             category_id INTEGER NOT NULL,
+            paid_amount REAL NOT NULL DEFAULT 0,
             note TEXT,
             tags TEXT,
             FOREIGN KEY(category_id) REFERENCES categories(id)
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS account_allocations(
+            id INTEGER PRIMARY KEY,
+            date TEXT NOT NULL,
+            account_id INTEGER NOT NULL,
+            target_type TEXT NOT NULL,
+            target_id INTEGER NOT NULL,
+            amount REAL NOT NULL,
+            note TEXT,
+            FOREIGN KEY(account_id) REFERENCES accounts(id)
         )
         """,
         """
@@ -135,6 +148,12 @@ def init_db() -> None:
     with connect() as conn:
         for stmt in schema_statements:
             conn.execute(stmt)
+
+        # Migration for older DBs created before expense payment tracking existed.
+        columns = {row["name"] for row in conn.execute("PRAGMA table_info(expenses)").fetchall()}
+        if "paid_amount" not in columns:
+            conn.execute("ALTER TABLE expenses ADD COLUMN paid_amount REAL NOT NULL DEFAULT 0")
+
         conn.commit()
 
 
