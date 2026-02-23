@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .account-item, .debt-item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .account-item .name, .debt-item .name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .account-item .delete, .debt-item .delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .account-item .delete:hover, .debt-item .delete:hover {
+            background: #c0392b;
+        }
+
+        .category-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .category-row input {
+            padding: 10px;
+        }
+
+        .category-row button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .category-row button:hover {
+            background: #c0392b;
+        }
+
+        .allocation-total {
+            text-align: right;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .allocation-total.valid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .allocation-total.invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-add {
+            background: #27ae60;
+            color: white;
+            width: auto;
+            padding: 10px 20px;
+        }
+
+        .btn-add:hover {
+            background: #229954;
+        }
+
+        .add-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+
+        .step.active {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .step.completed {
+            color: #27ae60;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 Budget Setup Wizard</h1>
+        <p class="subtitle">Let's get your budget set up step by step</p>
+
+        <div id="alert-container"></div>
+
+        <div id="setup-content">
+            <!-- Step 1: Accounts -->
+            <div class="section">
+                <h2>1. Bank Accounts</h2>
+                <p style="color: #666; margin-bottom: 15px; font-size: 0.95em;">Add all your bank accounts and savings</p>
+                
+                <div class="form-group">
+                    <label>Account Name *</label>
+                    <input type="text" id="newAccountName" placeholder="e.g., Checking, Savings">
+                </div>
+                <div class="form-group">
+                    <label>Institution</label>
+                    <input type="text" id="newAccountInstitution" placeholder="e.g., Chase, Bank of America">
+                </div>
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select id="newAccountType">
+                        <option>checking</option>
+                        <option>savings</option>
+                        <option>hysa</option>
+                        <option>401k</option>
+                        <option>roth</option>
+                        <option>brokerage</option>
+                        <option>cash</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Current Balance *</label>
+                    <input type="number" id="newAccountBalance" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Interest Rate (%)</label>
+                    <input type="number" id="newAccountRate" step="0.01" placeholder="0.00">
+                </div>
+                <button class="btn-add" onclick="addAccount()">+ Add Account</button>
+
+                <div id="accounts-list" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- Step 2: Debts -->
+            <div class="section">
+                <h2>2. Debts</h2>
+                <p style="color: #666; margin-bottom: 15px; font-size: 0.95em;">Add credit cards, loans, and other debts</p>
+
+                <div class="form-group">
+                    <label>Debt Name *</label>
+                    <input type="text" id="newDebtName" placeholder="e.g., Credit Card, Student Loan">
+                </div>
+                <div class="form-group">
+                    <label>Institution/Person</label>
+                    <input type="text" id="newDebtInstitution" placeholder="e.g., Capital One, Sallie Mae">
+                </div>
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select id="newDebtType">
+                        <option>personal</option>
+                        <option>credit_card</option>
+                        <option>loan</option>
+                        <option>medical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Current Balance *</label>
+                    <input type="number" id="newDebtBalance" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Interest Rate (%)</label>
+                    <input type="number" id="newDebtRate" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Min Payment</label>
+                    <input type="number" id="newDebtMinPayment" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Due Day (1-31)</label>
+                    <input type="number" id="newDebtDueDay" min="1" max="31" placeholder="15">
+                </div>
+                <button class="btn-add" onclick="addDebt()">+ Add Debt</button>
+
+                <div id="debts-list" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- Step 3: Categories -->
+            <div class="section">
+                <h2>3. Budget Categories</h2>
+                <p style="color: #666; margin-bottom: 15px; font-size: 0.95em;">Set up spending categories (allocations must total 100%)</p>
+
+                <div id="categories-list">
+                    <div class="category-row">
+                        <input type="text" placeholder="Category name" value="Savings & Debt" readonly>
+                        <input type="number" placeholder="%" step="0.01" value="40" class="category-pct">
+                    </div>
+                    <div class="category-row">
+                        <input type="text" placeholder="Category name" value="Groceries" readonly>
+                        <input type="number" placeholder="%" step="0.01" value="20" class="category-pct">
+                    </div>
+                    <div class="category-row">
+                        <input type="text" placeholder="Category name" value="Entertainment" readonly>
+                        <input type="number" placeholder="%" step="0.01" value="15" class="category-pct">
+                    </div>
+                    <div class="category-row">
+                        <input type="text" placeholder="Category name" value="Clothing" readonly>
+                        <input type="number" placeholder="%" step="0.01" value="10" class="category-pct">
+                    </div>
+                    <div class="category-row">
+                        <input type="text" placeholder="Category name" value="Misc" readonly>
+                        <input type="number" placeholder="%" step="0.01" value="15" class="category-pct">
+                    </div>
+                </div>
+
+                <div class="allocation-total valid">
+                    Total Allocation: <span id="allocation-total">100%</span>
+                </div>
+
+                <button class="btn-add" onclick="addCategory()" style="margin-top: 10px;">+ Add Category</button>
+            </div>
+
+            <!-- Complete Setup -->
+            <div class="button-group" style="margin-top: 40px;">
+                <button class="btn-primary" onclick="completeSetup()">Complete Setup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let accounts = [];
+        let debts = [];
+
+        function showAlert(message, type = 'error') {
+            const alertContainer = document.getElementById('alert-container');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertContainer.appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 3000);
+        }
+
+        function addAccount() {
+            const name = document.getElementById('newAccountName').value;
+            const institution = document.getElementById('newAccountInstitution').value;
+            const type = document.getElementById('newAccountType').value;
+            const balance = document.getElementById('newAccountBalance').value;
+            const rate = document.getElementById('newAccountRate').value;
+
+            if (!name || !balance) {
+                showAlert('Name and balance are required');
+                return;
+            }
+
+            accounts.push({ name, institution, type, balance, rate });
+            renderAccounts();
+
+            // Clear form
+            document.getElementById('newAccountName').value = '';
+            document.getElementById('newAccountInstitution').value = '';
+            document.getElementById('newAccountBalance').value = '';
+            document.getElementById('newAccountRate').value = '';
+        }
+
+        function renderAccounts() {
+            const list = document.getElementById('accounts-list');
+            list.innerHTML = '';
+            accounts.forEach((acc, idx) => {
+                const div = document.createElement('div');
+                div.className = 'account-item';
+                div.innerHTML = `
+                    <span class="name">${acc.name} (${acc.type}) - $${parseFloat(acc.balance).toFixed(2)}</span>
+                    <button class="delete" onclick="removeAccount(${idx})">Remove</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function removeAccount(idx) {
+            accounts.splice(idx, 1);
+            renderAccounts();
+        }
+
+        function addDebt() {
+            const name = document.getElementById('newDebtName').value;
+            const institution = document.getElementById('newDebtInstitution').value;
+            const type = document.getElementById('newDebtType').value;
+            const balance = document.getElementById('newDebtBalance').value;
+            const rate = document.getElementById('newDebtRate').value;
+            const minPayment = document.getElementById('newDebtMinPayment').value;
+            const dueDay = document.getElementById('newDebtDueDay').value;
+
+            if (!name || !balance) {
+                showAlert('Name and balance are required');
+                return;
+            }
+
+            debts.push({ name, institution, type, balance, rate, minPayment, dueDay });
+            renderDebts();
+
+            // Clear form
+            document.getElementById('newDebtName').value = '';
+            document.getElementById('newDebtInstitution').value = '';
+            document.getElementById('newDebtBalance').value = '';
+            document.getElementById('newDebtRate').value = '';
+            document.getElementById('newDebtMinPayment').value = '';
+            document.getElementById('newDebtDueDay').value = '';
+        }
+
+        function renderDebts() {
+            const list = document.getElementById('debts-list');
+            list.innerHTML = '';
+            debts.forEach((debt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'debt-item';
+                div.innerHTML = `
+                    <span class="name">${debt.name} (${debt.type}) - $${parseFloat(debt.balance).toFixed(2)}</span>
+                    <button class="delete" onclick="removeDebt(${idx})">Remove</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function removeDebt(idx) {
+            debts.splice(idx, 1);
+            renderDebts();
+        }
+
+        function addCategory() {
+            const list = document.getElementById('categories-list');
+            const row = document.createElement('div');
+            row.className = 'category-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Category name" value="" class="category-name">
+                <input type="number" placeholder="%" step="0.01" value="0" class="category-pct">
+                <button onclick="this.parentNode.remove(); updateAllocationTotal();">✕</button>
+            `;
+            list.appendChild(row);
+            updateAllocationTotal();
+        }
+
+        function updateAllocationTotal() {
+            const inputs = document.querySelectorAll('.category-pct');
+            let total = 0;
+            inputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            
+            const display = document.getElementById('allocation-total');
+            const container = display.parentElement;
+            display.textContent = total.toFixed(2) + '%';
+            
+            if (Math.abs(total - 100) <= 0.01) {
+                container.className = 'allocation-total valid';
+            } else {
+                container.className = 'allocation-total invalid';
+            }
+        }
+
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('category-pct')) {
+                updateAllocationTotal();
+            }
+        });
+
+        async function completeSetup() {
+            const inputs = document.querySelectorAll('.category-pct');
+            let total = 0;
+            inputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+
+            if (Math.abs(total - 100) > 0.01) {
+                showAlert('Category allocations must total 100%');
+                return;
+            }
+
+            try {
+                // Add all accounts
+                for (const acc of accounts) {
+                    await fetch('/api/accounts', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: acc.name,
+                            institution: acc.institution,
+                            type: acc.type,
+                            balance: acc.balance,
+                            interest_rate: acc.rate,
+                        })
+                    });
+                }
+
+                // Add all debts
+                for (const debt of debts) {
+                    await fetch('/api/debts', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: debt.name,
+                            institution: debt.institution,
+                            type: debt.type,
+                            balance: debt.balance,
+                            interest_rate: debt.rate,
+                            min_payment: debt.minPayment,
+                            due_day: debt.dueDay,
+                        })
+                    });
+                }
+
+                // Add categories
+                const categoryNames = document.querySelectorAll('.category-name');
+                const categoryPcts = document.querySelectorAll('.category-pct');
+                const categories = [];
+                for (let i = 0; i < categoryNames.length; i++) {
+                    categories.push([categoryNames[i].value, parseFloat(categoryPcts[i].value)]);
+                }
+
+                await fetch('/api/setup/categories', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ categories })
+                });
+
+                window.location.href = '/';
+            } catch (error) {
+                showAlert('Error completing setup: ' + error);
+            }
+        }
+
+        updateAllocationTotal();
+    </script>
+</body>
+</html>

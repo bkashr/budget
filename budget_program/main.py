@@ -60,11 +60,23 @@ def prompt_date(message: str, default_today: bool = True, allow_blank: bool = Fa
             print("Use YYYY-MM-DD format.")
 
 
+def print_setup_dashboard() -> None:
+    """Display current setup state during wizard."""
+    print("\n" + "="*60)
+    print("SETUP DASHBOARD - Current State")
+    print("="*60)
+    list_accounts()
+    list_debts()
+    list_categories()
+    print("="*60 + "\n")
+
+
 def setup_wizard() -> None:
     print("\n=== Setup Wizard ===")
 
     print("\nAdd accounts (leave name blank when done).")
     while True:
+        print_setup_dashboard()
         name = prompt_text("Account name (blank to finish)")
         if not name:
             break
@@ -77,9 +89,11 @@ def setup_wizard() -> None:
             "INSERT INTO accounts(name, institution, type, balance, interest_rate, created_at) VALUES (?, ?, ?, ?, ?, ?)",
             (name, institution or None, account_type, balance, rate, date.today().isoformat()),
         )
+        print("✓ Account added")
 
     print("\nAdd debts (leave name blank when done).")
     while True:
+        print_setup_dashboard()
         name = prompt_text("Debt name (blank to finish)")
         if not name:
             break
@@ -105,12 +119,14 @@ def setup_wizard() -> None:
                 date.today().isoformat(),
             ),
         )
+        print("✓ Debt added")
 
     set_initial_categories()
 
 
 def set_initial_categories() -> None:
     print("\nCategories and allocation percentages (must total 100%).")
+    print_setup_dashboard()
     use_defaults = prompt_text("Use default categories? (y/n)", "y").lower() == "y"
 
     execute("DELETE FROM categories")
@@ -143,6 +159,9 @@ def set_initial_categories() -> None:
             "INSERT INTO categories(name, parent_id, allocation_pct, created_at) VALUES (?, NULL, ?, ?)",
             (name, pct, date.today().isoformat()),
         )
+    
+    print_setup_dashboard()
+    print("✓ Setup complete! Starting main program...\n")
 
     add_sub = prompt_text("Add subcategories now? (y/n)", "n").lower() == "y"
     if add_sub:
