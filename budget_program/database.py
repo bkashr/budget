@@ -1,4 +1,4 @@
-"""Database helpers and schema initialization for the budget CLI app."""
+"""Database helpers and schema initialization for the budget app."""
 
 from __future__ import annotations
 
@@ -63,6 +63,8 @@ def init_db() -> None:
             created_at TEXT NOT NULL
         )
         """,
+        # Flexible-spending categories. allocation_pct is a share of "spendable"
+        # money (income left after subscriptions and goal savings are reserved).
         """
         CREATE TABLE IF NOT EXISTS categories(
             id INTEGER PRIMARY KEY,
@@ -73,21 +75,39 @@ def init_db() -> None:
             FOREIGN KEY(parent_id) REFERENCES categories(id)
         )
         """,
+        # Actual money received. No fixed cadence is required: log a paycheck,
+        # tips, a side gig, anything, whenever it lands.
         """
-        CREATE TABLE IF NOT EXISTS paychecks(
+        CREATE TABLE IF NOT EXISTS income_entries(
             id INTEGER PRIMARY KEY,
             date TEXT NOT NULL,
             amount REAL NOT NULL,
+            source TEXT,
             note TEXT
         )
         """,
+        # Optional expected income used to project the monthly budget and pace
+        # goals. Single row (id = 1). Cadence is weekly/biweekly/semimonthly/monthly.
         """
-        CREATE TABLE IF NOT EXISTS allocations(
+        CREATE TABLE IF NOT EXISTS income_profile(
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            expected_amount REAL,
+            cadence TEXT,
+            updated_at TEXT NOT NULL
+        )
+        """,
+        # Recurring/consistent spending (subscriptions, memberships, fixed bills).
+        # Normalized to a monthly cost and reserved off the top of income.
+        """
+        CREATE TABLE IF NOT EXISTS recurring_expenses(
             id INTEGER PRIMARY KEY,
-            paycheck_id INTEGER NOT NULL,
-            category_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
             amount REAL NOT NULL,
-            FOREIGN KEY(paycheck_id) REFERENCES paychecks(id),
+            cadence TEXT NOT NULL,
+            category_id INTEGER,
+            due_day INTEGER,
+            active INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL,
             FOREIGN KEY(category_id) REFERENCES categories(id)
         )
         """,
@@ -148,18 +168,14 @@ def init_db() -> None:
     with connect() as conn:
         for stmt in schema_statements:
             conn.execute(stmt)
-
-        # Migration for older DBs created before expense payment tracking existed.
-        columns = {row["name"] for row in conn.execute("PRAGMA table_info(expenses)").fetchall()}
-        if "paid_amount" not in columns:
-            conn.execute("ALTER TABLE expenses ADD COLUMN paid_amount REAL NOT NULL DEFAULT 0")
-
         conn.commit()
 
 
 def has_initial_data() -> bool:
-    """Return True if setup-related data already exists."""
-    account_count = fetchone("SELECT COUNT(*) AS c FROM accounts")
-    debt_count = fetchone("SELECT COUNT(*) AS c FROM debts")
-    category_count = fetchone("SELECT COUNT(*) AS c FROM categories")
-    return bool(account_count and debt_count and category_count and (account_count["c"] > 0 or debt_count["c"] > 0) and category_count["c"] > 0)
+    """Return True once the budget has been configured.
+
+    The setup wizard always finishes by saving budget categories, so their
+    presence is the signal that onboarding is complete.
+    """
+    row = fetchone("SELECT COUNT(*) AS c FROM categories")
+    return bool(row and row["c"] > 0)

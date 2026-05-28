@@ -6,62 +6,61 @@
     <title>Budget Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; }
-        header { color: white; margin-bottom: 30px; text-align: center; }
+        header { color: white; margin-bottom: 24px; text-align: center; }
         h1 { font-size: 2.2em; margin-bottom: 10px; }
-        .nav-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
-        button {
-            background: white; color: #667eea; border: none; padding: 10px 20px; border-radius: 5px;
-            cursor: pointer; font-weight: bold; transition: all 0.3s ease;
-        }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+        .nav-buttons { display: flex; gap: 8px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
+        button { background: white; color: #667eea; border: none; padding: 10px 18px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .card h2 { color: #667eea; margin-bottom: 15px; font-size: 1.3em; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
-        .card-item { padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .card-item:last-child { border-bottom: none; }
-        .card-label { font-weight: 500; color: #333; }
-        .card-value { color: #667eea; font-weight: bold; font-size: 1.05em; white-space: nowrap; }
-        .card-value.positive { color: #27ae60; }
-        .card-value.negative { color: #e74c3c; }
-        .card-value.clickable { cursor: pointer; text-decoration: underline; text-decoration-style: dotted; }
-        .total-card { grid-column: 1 / -1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .total-card h2 { color: white; border-color: white; }
-        .total-card .card-label { color: rgba(255, 255, 255, 0.8); }
-        .total-card .card-value { color: #4ade80; }
-        .total-card .card-value.negative { color: #f87171; }
+        .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card.wide { grid-column: 1 / -1; }
+        .card h2 { color: #667eea; margin-bottom: 15px; font-size: 1.25em; border-bottom: 2px solid #667eea; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .card h2 .mini { font-size: 0.6em; font-weight: normal; }
+        .row-item { padding: 9px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .row-item:last-child { border-bottom: none; }
+        .label { font-weight: 500; color: #333; }
+        .sub { color: #777; font-size: 0.85em; }
+        .value { color: #667eea; font-weight: bold; white-space: nowrap; }
+        .value.positive { color: #27ae60; }
+        .value.negative { color: #e74c3c; }
+        .value.clickable { cursor: pointer; text-decoration: underline dotted; }
+        .total-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .total-card h2 { color: white; border-color: rgba(255,255,255,0.5); }
+        .total-card .label { color: rgba(255,255,255,0.85); }
+        .total-card .value { color: #4ade80; }
+        .total-card .value.negative { color: #f87171; }
+        .plan-line { display: flex; justify-content: space-between; padding: 6px 0; }
+        .plan-line.total { border-top: 2px solid #eee; margin-top: 6px; padding-top: 10px; font-weight: bold; font-size: 1.05em; }
+        .cat { background: #f7f7fc; padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+        .cat.over { border-left: 4px solid #e74c3c; }
+        .bar { background: #ecf0f1; border-radius: 10px; height: 16px; overflow: hidden; margin-top: 6px; }
+        .fill { background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 0%; }
+        .fill.over { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+        .warn { background: #fff3cd; color: #856404; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; font-size: 0.9em; }
+        .del { background: #f3d4d4; color: #c0392b; padding: 5px 9px; font-size: 0.8em; }
+        .del:hover { background: #e74c3c; color: white; }
         .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
         label { font-weight: 500; color: #333; margin-bottom: 5px; font-size: 0.9em; }
         input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; }
-        input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 5px rgba(102, 126, 234, 0.3); }
-        .form-actions { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .btn-primary { background: #667eea; color: white; }
-        .btn-primary:hover { background: #5568d3; }
-        .btn-secondary { background: #95a5a6; color: white; }
-        .btn-secondary:hover { background: #7f8c8d; }
-        .btn-small { font-size: 0.85em; padding: 7px 10px; }
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); }
+        input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 5px rgba(102,126,234,0.3); }
+        .form-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-primary { background: #667eea; color: white; flex: 1; }
+        .btn-secondary { background: #95a5a6; color: white; flex: 1; }
+        .btn-small { font-size: 0.82em; padding: 6px 10px; }
+        .modal { display: none; position: fixed; z-index: 100; inset: 0; background: rgba(0,0,0,0.4); }
         .modal.active { display: flex; }
-        .modal-content { background-color: white; margin: auto; padding: 30px; border-radius: 10px; width: 90%; max-width: 560px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
-        .modal-content h2 { color: #667eea; margin-bottom: 20px; }
-        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-content { background: white; margin: auto; padding: 28px; border-radius: 10px; width: 92%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+        .modal-content h2 { color: #667eea; margin-bottom: 18px; }
+        .close { color: #aaa; float: right; font-size: 26px; font-weight: bold; cursor: pointer; }
         .close:hover { color: #000; }
-        .alert { padding: 15px; margin-bottom: 20px; border-radius: 5px; }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .category-item { background: #f5f5f5; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
-        .category-item.overspent { border-left: 4px solid #e74c3c; }
-        .progress-bar { background: #ecf0f1; border-radius: 10px; height: 20px; overflow: hidden; margin-top: 5px; }
-        .progress-fill { background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.3s ease; }
-        .refresh-btn { background: #667eea; color: white; }
+        .alert { padding: 13px; margin-bottom: 16px; border-radius: 5px; }
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-error { background: #f8d7da; color: #721c24; }
         .loading { text-align: center; padding: 40px; color: white; font-size: 1.2em; }
-        .expense-meta { font-size: 0.85em; color: #666; margin-top: 6px; }
+        .empty { color: #999; font-style: italic; }
+        .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     </style>
 </head>
 <body>
@@ -69,452 +68,364 @@
         <header>
             <h1>Budget Dashboard</h1>
             <div class="nav-buttons">
-                <button class="refresh-btn" onclick="loadDashboard()">Refresh</button>
-                <button onclick="openAddAccountModal()">+ Account</button>
-                <button onclick="openAddDebtModal()">+ Debt</button>
-                <button onclick="openAddPaycheckModal()">+ Paycheck</button>
-                <button onclick="openAddExpenseModal()">+ Expense</button>
+                <button onclick="loadDashboard()">Refresh</button>
+                <button onclick="openModal('incomeModal')">+ Income</button>
+                <button onclick="openExpenseModal()">+ Expense</button>
+                <button onclick="openModal('subModal')">+ Subscription</button>
+                <button onclick="openGoalModal()">+ Goal</button>
+                <button onclick="openModal('accountModal')">+ Account</button>
+                <button onclick="openModal('debtModal')">+ Debt</button>
             </div>
         </header>
-
         <div id="alert-container"></div>
         <div id="dashboard-content" class="loading">Loading dashboard...</div>
     </div>
 
+    <!-- Modals -->
     <div id="accountModal" class="modal"><div class="modal-content">
         <span class="close" onclick="closeModal('accountModal')">&times;</span><h2>Add Account</h2>
-        <div class="form-group"><label>Account Name *</label><input type="text" id="accountName" placeholder="e.g., Checking"></div>
-        <div class="form-group"><label>Institution</label><input type="text" id="accountInstitution" placeholder="e.g., Chase"></div>
-        <div class="form-group"><label>Type *</label><select id="accountType"><option>checking</option><option>savings</option><option>hysa</option><option>401k</option><option>roth</option><option>brokerage</option><option>cash</option></select></div>
-        <div class="form-group"><label>Current Balance *</label><input type="number" id="accountBalance" step="0.01" placeholder="0.00"></div>
-        <div class="form-group"><label>Interest Rate (%)</label><input type="number" id="accountRate" step="0.01" placeholder="0.00"></div>
+        <div class="form-group"><label>Name *</label><input id="accountName" placeholder="e.g., Checking"></div>
+        <div class="form-group"><label>Institution</label><input id="accountInstitution"></div>
+        <div class="form-group"><label>Type *</label><select id="accountType"><option>checking</option><option>savings</option><option>hysa</option><option>roth_ira</option><option>401k</option><option>brokerage</option><option>cash</option></select></div>
+        <div class="form-group"><label>Current Balance *</label><input id="accountBalance" type="number" step="0.01"></div>
+        <div class="form-group"><label>Interest Rate (%)</label><input id="accountRate" type="number" step="0.01"></div>
         <div class="form-actions"><button class="btn-primary" onclick="saveAccount()">Save</button><button class="btn-secondary" onclick="closeModal('accountModal')">Cancel</button></div>
     </div></div>
 
     <div id="debtModal" class="modal"><div class="modal-content">
         <span class="close" onclick="closeModal('debtModal')">&times;</span><h2>Add Debt</h2>
-        <div class="form-group"><label>Debt Name *</label><input type="text" id="debtName" placeholder="e.g., Credit Card"></div>
-        <div class="form-group"><label>Institution/Person</label><input type="text" id="debtInstitution" placeholder="e.g., Capital One"></div>
-        <div class="form-group"><label>Type *</label><select id="debtType"><option>personal</option><option>credit_card</option><option>loan</option><option>medical</option></select></div>
-        <div class="form-group"><label>Current Balance *</label><input type="number" id="debtBalance" step="0.01" placeholder="0.00"></div>
-        <div class="form-group"><label>Interest Rate (%)</label><input type="number" id="debtRate" step="0.01" placeholder="0.00"></div>
-        <div class="form-group"><label>Min Payment</label><input type="number" id="debtMinPayment" step="0.01" placeholder="0.00"></div>
-        <div class="form-group"><label>Due Day (1-31)</label><input type="number" id="debtDueDay" min="1" max="31" placeholder="15"></div>
+        <div class="form-group"><label>Name *</label><input id="debtName" placeholder="e.g., Credit Card"></div>
+        <div class="form-group"><label>Institution / Lender</label><input id="debtInstitution"></div>
+        <div class="form-group"><label>Type *</label><select id="debtType"><option>loan</option><option>credit_card</option><option>student_loan</option><option>auto</option><option>medical</option><option>personal</option></select></div>
+        <div class="form-group"><label>Current Balance *</label><input id="debtBalance" type="number" step="0.01"></div>
+        <div class="two"><div class="form-group"><label>Interest Rate (%)</label><input id="debtRate" type="number" step="0.01"></div>
+        <div class="form-group"><label>Min Payment</label><input id="debtMinPayment" type="number" step="0.01"></div></div>
+        <div class="form-group"><label>Due Day (1-31)</label><input id="debtDueDay" type="number" min="1" max="31"></div>
         <div class="form-actions"><button class="btn-primary" onclick="saveDebt()">Save</button><button class="btn-secondary" onclick="closeModal('debtModal')">Cancel</button></div>
     </div></div>
 
-    <div id="paycheckModal" class="modal"><div class="modal-content">
-        <span class="close" onclick="closeModal('paycheckModal')">&times;</span><h2>Add Paycheck</h2>
-        <div class="form-group"><label>Amount *</label><input type="number" id="paycheckAmount" step="0.01" placeholder="0.00"></div>
-        <div class="form-group"><label>Date</label><input type="date" id="paycheckDate"></div>
-        <div class="form-group"><label>Note</label><input type="text" id="paycheckNote" placeholder="Optional note"></div>
-        <div class="form-actions"><button class="btn-primary" onclick="savePaycheck()">Save</button><button class="btn-secondary" onclick="closeModal('paycheckModal')">Cancel</button></div>
+    <div id="incomeModal" class="modal"><div class="modal-content">
+        <span class="close" onclick="closeModal('incomeModal')">&times;</span><h2>Log Income</h2>
+        <p class="sub" style="margin-bottom:14px;">Money received &mdash; paycheck, tips, side gig. Log it whenever it lands.</p>
+        <div class="form-group"><label>Amount *</label><input id="incomeAmount" type="number" step="0.01"></div>
+        <div class="form-group"><label>Source</label><input id="incomeSource" placeholder="e.g., Serving shift"></div>
+        <div class="form-group"><label>Date</label><input id="incomeDate" type="date"></div>
+        <div class="form-group"><label>Note</label><input id="incomeNote"></div>
+        <div class="form-actions"><button class="btn-primary" onclick="saveIncome()">Save</button><button class="btn-secondary" onclick="closeModal('incomeModal')">Cancel</button></div>
     </div></div>
 
     <div id="expenseModal" class="modal"><div class="modal-content">
         <span class="close" onclick="closeModal('expenseModal')">&times;</span><h2>Add Expense</h2>
-        <div class="form-group"><label>Amount *</label><input type="number" id="expenseAmount" step="0.01" placeholder="0.00"></div>
+        <div class="form-group"><label>Amount *</label><input id="expenseAmount" type="number" step="0.01"></div>
         <div class="form-group"><label>Category *</label><select id="expenseCategory"></select></div>
-        <div class="form-group"><label>Date</label><input type="date" id="expenseDate"></div>
-        <div class="form-group"><label>Note</label><input type="text" id="expenseNote" placeholder="Optional note"></div>
-        <div class="form-group"><label>Tags</label><input type="text" id="expenseTags" placeholder="e.g., groceries, food"></div>
+        <div class="form-group"><label>Date</label><input id="expenseDate" type="date"></div>
+        <div class="form-group"><label>Note</label><input id="expenseNote"></div>
+        <div class="form-group"><label>Tags</label><input id="expenseTags" placeholder="comma,separated"></div>
         <div class="form-actions"><button class="btn-primary" onclick="saveExpense()">Save</button><button class="btn-secondary" onclick="closeModal('expenseModal')">Cancel</button></div>
     </div></div>
 
+    <div id="subModal" class="modal"><div class="modal-content">
+        <span class="close" onclick="closeModal('subModal')">&times;</span><h2>Add Subscription</h2>
+        <div class="form-group"><label>Name *</label><input id="subName" placeholder="e.g., Spotify"></div>
+        <div class="two"><div class="form-group"><label>Amount *</label><input id="subAmount" type="number" step="0.01"></div>
+        <div class="form-group"><label>Cadence *</label><select id="subCadence"><option value="monthly">monthly</option><option value="weekly">weekly</option><option value="biweekly">biweekly</option><option value="quarterly">quarterly</option><option value="yearly">yearly</option></select></div></div>
+        <div class="form-group"><label>Due Day (optional)</label><input id="subDueDay" type="number" min="1" max="31"></div>
+        <div class="form-actions"><button class="btn-primary" onclick="saveSub()">Save</button><button class="btn-secondary" onclick="closeModal('subModal')">Cancel</button></div>
+    </div></div>
+
+    <div id="goalModal" class="modal"><div class="modal-content">
+        <span class="close" onclick="closeModal('goalModal')">&times;</span><h2>Add Goal</h2>
+        <div class="form-group"><label>Type *</label><select id="goalType" onchange="renderGoalModalFields()">
+            <option value="target_balance">Reach a balance in an account</option>
+            <option value="contribution_cap">Contribute up to a cap (e.g., Roth IRA)</option>
+            <option value="debt_payoff">Pay off a debt</option>
+            <option value="custom">Custom savings target</option>
+        </select></div>
+        <div class="form-group"><label>Name *</label><input id="goalName" placeholder="e.g., $10k emergency fund"></div>
+        <div id="goalFields"></div>
+        <div class="form-actions"><button class="btn-primary" onclick="saveGoal()">Save</button><button class="btn-secondary" onclick="closeModal('goalModal')">Cancel</button></div>
+    </div></div>
+
+    <div id="incomeProfileModal" class="modal"><div class="modal-content">
+        <span class="close" onclick="closeModal('incomeProfileModal')">&times;</span><h2>Expected Income</h2>
+        <p class="sub" style="margin-bottom:14px;">Steady earnings used to project your budget and pace goals. Leave blank to clear.</p>
+        <div class="two"><div class="form-group"><label>Amount</label><input id="profileAmount" type="number" step="0.01"></div>
+        <div class="form-group"><label>How often</label><select id="profileCadence"><option value="biweekly">every 2 weeks</option><option value="weekly">weekly</option><option value="semimonthly">twice a month</option><option value="monthly">monthly</option></select></div></div>
+        <div class="form-actions"><button class="btn-primary" onclick="saveProfile()">Save</button><button class="btn-secondary" onclick="closeModal('incomeProfileModal')">Cancel</button></div>
+    </div></div>
+
     <div id="allocateModal" class="modal"><div class="modal-content">
-        <span class="close" onclick="closeModal('allocateModal')">&times;</span><h2>Allocate or Transfer</h2>
+        <span class="close" onclick="closeModal('allocateModal')">&times;</span><h2>Allocate / Pay</h2>
         <input type="hidden" id="allocateAccountId">
         <div class="form-group"><label id="allocateSourceLabel">Source Account</label></div>
-        <div class="form-group"><label>Target Type *</label><select id="allocTargetType" onchange="populateAllocationTargetOptions()"><option value="expense">Unpaid Expense</option><option value="debt">Debt</option></select></div>
+        <div class="form-group"><label>Target Type *</label><select id="allocTargetType" onchange="populateAllocTargets()"><option value="expense">Unpaid Expense</option><option value="debt">Debt</option></select></div>
         <div class="form-group"><label>Target *</label><select id="allocTarget"></select></div>
-        <div class="form-group"><label>Amount *</label><input type="number" id="allocAmount" step="0.01" placeholder="0.00"></div>
-        <div class="form-group"><label>Date</label><input type="date" id="allocDate"></div>
-        <div class="form-group"><label>Note</label><input type="text" id="allocNote" placeholder="Optional note"></div>
+        <div class="form-group"><label>Amount *</label><input id="allocAmount" type="number" step="0.01"></div>
+        <div class="form-group"><label>Date</label><input id="allocDate" type="date"></div>
+        <div class="form-group"><label>Note</label><input id="allocNote"></div>
         <div class="form-actions"><button class="btn-primary" onclick="saveAllocation()">Allocate</button><button class="btn-secondary" onclick="closeModal('allocateModal')">Cancel</button></div>
     </div></div>
 
     <script>
-        let dashboardData = null;
+        let data = null;
+        const $ = id => document.getElementById(id);
+        const money = n => '$' + Number(n || 0).toFixed(2);
+        function openModal(id) { $(id).classList.add('active'); }
+        function closeModal(id) { $(id).classList.remove('active'); }
+        function todayStr() { return new Date().toISOString().slice(0, 10); }
 
-        document.getElementById('paycheckDate').valueAsDate = new Date();
-        document.getElementById('expenseDate').valueAsDate = new Date();
-        document.getElementById('allocDate').valueAsDate = new Date();
-
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alert-container');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.textContent = message;
-            alertContainer.appendChild(alertDiv);
-            setTimeout(() => alertDiv.remove(), 3000);
-        }
-
-        function populateCategoryDropdown(categories) {
-            const select = document.getElementById('expenseCategory');
-            select.innerHTML = '';
-            categories.forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat.id;
-                option.textContent = cat.parent_id ? `- ${cat.name}` : cat.name;
-                select.appendChild(option);
-            });
+        function showAlert(msg, type = 'success') {
+            const c = $('alert-container');
+            const d = document.createElement('div');
+            d.className = `alert alert-${type}`; d.textContent = msg;
+            c.appendChild(d); setTimeout(() => d.remove(), 3500);
         }
 
         async function loadDashboard() {
             try {
-                const response = await fetch('/api/dashboard');
-                const data = await response.json();
-                dashboardData = data;
-                renderDashboard(data);
-                populateCategoryDropdown(data.all_categories || []);
-            } catch (error) {
-                showAlert('Error loading dashboard: ' + error, 'error');
-            }
-        }
-
-        function renderDashboard(data) {
-            const html = `
-                <div class="grid">
-                    <div class="card total-card">
-                        <h2>Summary</h2>
-                        <div class="card-item"><span class="card-label">Total Accounts</span><span class="card-value positive">$${Number(data.totals.accounts).toFixed(2)}</span></div>
-                        <div class="card-item"><span class="card-label">Total Debts</span><span class="card-value negative">$${Number(data.totals.debts).toFixed(2)}</span></div>
-                        <div class="card-item"><span class="card-label">Net Worth</span><span class="card-value ${Number(data.totals.net_worth) >= 0 ? 'positive' : 'negative'}">$${Number(data.totals.net_worth).toFixed(2)}</span></div>
-                    </div>
-                    ${renderAccounts(data.accounts)}
-                    ${renderDebts(data.debts)}
-                    ${renderCategories(data.categories)}
-                    ${renderRecentExpenses(data.recent_expenses || [], data.all_categories || [])}
-                    ${renderGoals(data.goals)}
-                </div>
-            `;
-            document.getElementById('dashboard-content').innerHTML = html;
-        }
-        function renderAccounts(accounts) {
-            if (!accounts || accounts.length === 0) return '<div class="card"><h2>Accounts</h2><p>(none)</p></div>';
-            let html = '<div class="card"><h2>Accounts</h2>';
-            accounts.forEach(acc => {
-                html += `
-                    <div class="card-item">
-                        <span class="card-label">${acc.name} (${acc.type})</span>
-                        <span class="card-value positive clickable" onclick="openAllocateModal(${acc.id})">$${Number(acc.balance).toFixed(2)}</span>
-                    </div>
-                `;
-            });
-            html += '<div class="expense-meta">Click an account balance to allocate/transfer to an unpaid expense or debt.</div>';
-            html += '</div>';
-            return html;
-        }
-
-        function renderDebts(debts) {
-            if (!debts || debts.length === 0) return '<div class="card"><h2>Debts</h2><p>(none)</p></div>';
-            let html = '<div class="card"><h2>Debts</h2>';
-            debts.forEach(debt => {
-                html += `
-                    <div class="card-item">
-                        <span class="card-label">${debt.name} (${debt.type})</span>
-                        <span class="card-value negative">$${Number(debt.balance).toFixed(2)}</span>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            return html;
-        }
-
-        function renderCategories(categories) {
-            const topLevel = (categories || []).filter(c => !c.parent_id);
-            if (topLevel.length === 0) return '<div class="card"><h2>Categories</h2><p>(none)</p></div>';
-            let html = '<div class="card" style="grid-column: 1 / -1;"><h2>Category Balances</h2>';
-            topLevel.forEach(cat => {
-                const pctUsed = Number(cat.allocated) > 0 ? (Number(cat.spent) / Number(cat.allocated)) * 100 : 0;
-                const status = cat.overspent ? 'OVERSPENT' : '';
-                html += `
-                    <div class="category-item ${cat.overspent ? 'overspent' : ''}">
-                        <div class="card-item">
-                            <span class="card-label">${cat.name} (${Number(cat.allocation_pct).toFixed(2)}%)</span>
-                            <span class="card-value">$${Number(cat.available).toFixed(2)} available ${status}</span>
-                        </div>
-                        <div class="expense-meta">Allocated: $${Number(cat.allocated).toFixed(2)} | Spent: $${Number(cat.spent).toFixed(2)}</div>
-                        <div class="progress-bar"><div class="progress-fill" style="width: ${Math.min(pctUsed, 100)}%"></div></div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            return html;
-        }
-
-        function renderRecentExpenses(expenses, categories) {
-            if (!expenses || expenses.length === 0) {
-                return '<div class="card" style="grid-column: 1 / -1;"><h2>Recent Expenses</h2><p>(none)</p></div>';
-            }
-
-            const categoryOptions = (selectedId) => categories.map(cat => {
-                const selected = Number(cat.id) === Number(selectedId) ? 'selected' : '';
-                const label = cat.parent_id ? `- ${cat.name}` : cat.name;
-                return `<option value="${cat.id}" ${selected}>${label}</option>`;
-            }).join('');
-
-            let html = '<div class="card" style="grid-column: 1 / -1;"><h2>Recent Expenses</h2>';
-            expenses.forEach(exp => {
-                const remaining = Number(exp.remaining || 0);
-                html += `
-                    <div class="category-item">
-                        <div class="card-item">
-                            <span class="card-label">${exp.date} - $${Number(exp.amount).toFixed(2)} (${exp.category_name || 'N/A'})</span>
-                            <span class="card-value ${remaining <= 0 ? 'positive' : 'negative'}">${remaining <= 0 ? 'Paid' : 'Open'} ($${remaining.toFixed(2)} left)</span>
-                        </div>
-                        <div class="expense-meta">Paid: $${Number(exp.paid_amount || 0).toFixed(2)} | ${exp.note || ''}</div>
-                        <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center; flex-wrap: wrap;">
-                            <label style="margin: 0;">Category:</label>
-                            <select id="expense-category-${exp.id}">${categoryOptions(exp.category_id)}</select>
-                            <button class="btn-primary btn-small" onclick="updateExpenseCategory(${exp.id})">Update</button>
-                        </div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            return html;
-        }
-
-        function renderGoals(goals) {
-            if (!goals || goals.length === 0) return '';
-            let html = '<div class="card" style="grid-column: 1 / -1;"><h2>Goals</h2>';
-            goals.forEach(goal => {
-                const pctProgress = Number(goal.target_amount) > 0 ? (Number(goal.current_amount) / Number(goal.target_amount)) * 100 : 0;
-                html += `
-                    <div class="category-item">
-                        <div class="card-item">
-                            <span class="card-label">${goal.name} (${goal.type})</span>
-                            <span class="card-value">$${Number(goal.current_amount).toFixed(2)} / $${Number(goal.target_amount).toFixed(2)}</span>
-                        </div>
-                        <div class="expense-meta">Remaining: $${Number(goal.remaining).toFixed(2)} | ${goal.days_remaining} days left</div>
-                        <div class="progress-bar"><div class="progress-fill" style="width: ${Math.min(pctProgress, 100)}%"></div></div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            return html;
-        }
-
-        function openAddAccountModal() { openModal('accountModal'); }
-        function openAddDebtModal() { openModal('debtModal'); }
-        function openAddPaycheckModal() { openModal('paycheckModal'); }
-        function openAddExpenseModal() {
-            if (dashboardData) { populateCategoryDropdown(dashboardData.all_categories || []); }
-            openModal('expenseModal');
-        }
-
-        function openAllocateModal(accountId) {
-            if (!dashboardData) return;
-            const account = (dashboardData.accounts || []).find(a => Number(a.id) === Number(accountId));
-            if (!account) return showAlert('Account not found', 'error');
-            document.getElementById('allocateAccountId').value = account.id;
-            document.getElementById('allocateSourceLabel').textContent = `${account.name} (${account.type}) available: $${Number(account.balance).toFixed(2)}`;
-            document.getElementById('allocAmount').value = '';
-            document.getElementById('allocNote').value = '';
-            document.getElementById('allocDate').valueAsDate = new Date();
-            document.getElementById('allocTargetType').value = 'expense';
-            populateAllocationTargetOptions();
-            openModal('allocateModal');
-        }
-
-        function populateAllocationTargetOptions() {
-            const select = document.getElementById('allocTarget');
-            const targetType = document.getElementById('allocTargetType').value;
-            select.innerHTML = '';
-            if (!dashboardData) return;
-
-            if (targetType === 'expense') {
-                const pending = dashboardData.pending_expenses || [];
-                if (pending.length === 0) {
-                    const opt = document.createElement('option');
-                    opt.value = '';
-                    opt.textContent = 'No unpaid expenses';
-                    select.appendChild(opt);
-                    return;
+                const res = await fetch('/api/dashboard');
+                data = await res.json();
+                if (!data.plan || !data.plan.categories || data.plan.categories.length === 0) {
+                    window.location.href = '/setup'; return;
                 }
-                pending.forEach(exp => {
-                    const opt = document.createElement('option');
-                    opt.value = `expense:${exp.id}`;
-                    opt.textContent = `${exp.date} | ${exp.category_name || 'Expense'} | Remaining $${Number(exp.remaining).toFixed(2)}`;
-                    select.appendChild(opt);
-                });
-                return;
-            }
+                render();
+            } catch (e) { showAlert('Error loading dashboard: ' + e, 'error'); }
+        }
 
-            const debts = (dashboardData.debts || []).filter(d => Number(d.balance) > 0);
-            if (debts.length === 0) {
-                const opt = document.createElement('option');
-                opt.value = '';
-                opt.textContent = 'No open debts';
-                select.appendChild(opt);
-                return;
-            }
-            debts.forEach(debt => {
-                const opt = document.createElement('option');
-                opt.value = `debt:${debt.id}`;
-                opt.textContent = `${debt.name} (${debt.type}) | Balance $${Number(debt.balance).toFixed(2)}`;
-                select.appendChild(opt);
+        function render() {
+            populateCategoryDropdown();
+            const t = data.totals, p = data.plan;
+            const ip = data.income_profile;
+            const incLabel = ip ? `${money(ip.expected_amount)} / ${ip.cadence} (~${money(ip.monthly)}/mo)` : 'not set';
+            let html = '<div class="grid">';
+
+            html += `<div class="card total-card"><h2>Summary</h2>
+                <div class="row-item"><span class="label">Total Accounts</span><span class="value positive">${money(t.accounts)}</span></div>
+                <div class="row-item"><span class="label">Total Debts</span><span class="value negative">${money(t.debts)}</span></div>
+                <div class="row-item"><span class="label">Net Worth</span><span class="value ${t.net_worth >= 0 ? 'positive' : 'negative'}">${money(t.net_worth)}</span></div></div>`;
+
+            // Budget plan
+            html += `<div class="card wide"><h2>Monthly Budget <span class="mini">income ${p.income_basis === 'expected' ? '(expected)' : '(received so far)'}: ${incLabel} <button class="btn-small" onclick="openProfileModal()" style="margin-left:8px;">Edit income</button></span></h2>`;
+            p.warnings.forEach(w => { html += `<div class="warn">${w}</div>`; });
+            html += `<div class="plan-line"><span class="label">Income</span><span class="value">${money(p.monthly_income)}</span></div>
+                <div class="plan-line"><span class="label">- Subscriptions</span><span class="value negative">-${money(p.subscriptions_total)}</span></div>
+                <div class="plan-line"><span class="label">- Goal savings</span><span class="value negative">-${money(p.goals_total)}</span></div>
+                <div class="plan-line total"><span>Spendable</span><span class="value ${p.spendable >= 0 ? 'positive' : 'negative'}">${money(p.spendable)}</span></div>`;
+            html += '<div style="margin-top:14px;">';
+            p.categories.forEach(c => {
+                const used = c.planned > 0 ? Math.min((c.spent / c.planned) * 100, 100) : (c.spent > 0 ? 100 : 0);
+                html += `<div class="cat ${c.overspent ? 'over' : ''}">
+                    <div class="row-item"><span class="label">${c.name} <span class="sub">(${c.allocation_pct.toFixed(0)}%)</span></span>
+                    <span class="value ${c.overspent ? 'negative' : ''}">${money(c.spent)} / ${money(c.planned)}</span></div>
+                    <div class="sub">${c.overspent ? 'Over by ' + money(-c.remaining) : money(c.remaining) + ' left'}</div>
+                    <div class="bar"><div class="fill ${c.overspent ? 'over' : ''}" style="width:${used}%"></div></div></div>`;
             });
-        }
-        async function saveAllocation() {
-            const accountId = Number(document.getElementById('allocateAccountId').value);
-            const targetRaw = document.getElementById('allocTarget').value;
-            const amount = Number(document.getElementById('allocAmount').value);
-            const allocDate = document.getElementById('allocDate').value;
-            const note = document.getElementById('allocNote').value;
-            if (!accountId || !targetRaw || !amount) {
-                showAlert('Account, target, and amount are required', 'error');
-                return;
-            }
+            html += '</div></div>';
 
-            const [targetType, targetIdRaw] = targetRaw.split(':');
-            const targetId = Number(targetIdRaw);
+            // Accounts
+            html += '<div class="card"><h2>Accounts</h2>';
+            html += (data.accounts.length ? data.accounts.map(a =>
+                `<div class="row-item"><span class="label">${a.name} <span class="sub">(${a.type})</span></span>
+                 <span class="value positive clickable" onclick="openAllocateModal(${a.id})">${money(a.balance)}</span></div>`).join('')
+                : '<p class="empty">No accounts.</p>');
+            html += '<div class="sub" style="margin-top:8px;">Click a balance to pay an expense or debt from it.</div></div>';
+
+            // Debts
+            html += '<div class="card"><h2>Debts</h2>';
+            html += (data.debts.length ? data.debts.map(d =>
+                `<div class="row-item"><span class="label">${d.name} <span class="sub">(${d.type})</span></span><span class="value negative">${money(d.balance)}</span></div>`).join('')
+                : '<p class="empty">No debts.</p>');
+            html += '</div>';
+
+            // Subscriptions
+            html += `<div class="card"><h2>Subscriptions <span class="mini">~${money(p.subscriptions_total)}/mo</span></h2>`;
+            html += (p.subscriptions.length ? p.subscriptions.map(s =>
+                `<div class="row-item"><span class="label">${s.name} <span class="sub">${money(s.amount)}/${s.cadence}</span></span>
+                 <span><span class="value">~${money(s.monthly)}/mo</span> <button class="del btn-small" onclick="deleteSub(${s.id})">remove</button></span></div>`).join('')
+                : '<p class="empty">No subscriptions.</p>');
+            html += '</div>';
+
+            // Goals
+            html += '<div class="card wide"><h2>Goals</h2>';
+            html += (data.goals.length ? data.goals.map(g => {
+                const pct = g.target_amount > 0 ? Math.min((g.current_amount / g.target_amount) * 100, 100) : 0;
+                const need = g.monthly_needed != null ? `${money(g.monthly_needed)}/mo needed` : 'no deadline';
+                const days = g.days_remaining != null ? `${g.days_remaining} days left` : '';
+                return `<div class="cat">
+                    <div class="row-item"><span class="label">${g.name} <span class="sub">(${g.type})${g.behind ? ' &middot; <span style="color:#e74c3c">behind</span>' : ''}</span></span>
+                    <span><span class="value">${money(g.current_amount)} / ${money(g.target_amount)}</span> <button class="del btn-small" onclick="deleteGoal(${g.id})">remove</button></span></div>
+                    <div class="sub">${g.status} &middot; ${need} ${days ? '&middot; ' + days : ''}</div>
+                    <div class="bar"><div class="fill" style="width:${pct}%"></div></div></div>`;
+            }).join('') : '<p class="empty">No goals yet.</p>');
+            html += '</div>';
+
+            // Recent income
+            html += '<div class="card"><h2>Recent Income</h2>';
+            html += (data.recent_income.length ? data.recent_income.map(i =>
+                `<div class="row-item"><span class="label">${i.date} <span class="sub">${i.source || ''}</span></span><span class="value positive">${money(i.amount)}</span></div>`).join('')
+                : '<p class="empty">No income logged.</p>');
+            html += '</div>';
+
+            // Recent expenses
+            html += '<div class="card wide"><h2>Recent Expenses</h2>';
+            const opts = sel => (data.all_categories || []).map(c =>
+                `<option value="${c.id}" ${Number(c.id) === Number(sel) ? 'selected' : ''}>${c.parent_id ? '- ' : ''}${c.name}</option>`).join('');
+            html += (data.recent_expenses.length ? data.recent_expenses.map(e =>
+                `<div class="cat"><div class="row-item">
+                    <span class="label">${e.date} &mdash; ${money(e.amount)} <span class="sub">(${e.category_name || 'N/A'})</span></span>
+                    <span class="value ${e.remaining <= 0 ? 'positive' : 'negative'}">${e.remaining <= 0 ? 'Paid' : money(e.remaining) + ' left'}</span></div>
+                    <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+                        <select id="exp-cat-${e.id}">${opts(e.category_id)}</select>
+                        <button class="btn-primary btn-small" onclick="updateExpenseCategory(${e.id})">Update</button></div></div>`).join('')
+                : '<p class="empty">No expenses yet.</p>');
+            html += '</div>';
+
+            html += '</div>';
+            $('dashboard-content').innerHTML = html;
+        }
+
+        function populateCategoryDropdown() {
+            const sel = $('expenseCategory');
+            sel.innerHTML = (data.all_categories || []).map(c =>
+                `<option value="${c.id}">${c.parent_id ? '- ' : ''}${c.name}</option>`).join('');
+        }
+
+        // --- generic POST helper ---
+        async function post(url, body, okMsg, modalId) {
             try {
-                const response = await fetch('/api/allocations/account', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ account_id: accountId, target_type: targetType, target_id: targetId, amount, date: allocDate, note })
-                });
-                const result = await response.json();
-                if (!response.ok) return showAlert('Error: ' + result.error, 'error');
-                showAlert('Allocation completed!');
-                closeModal('allocateModal');
+                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const result = await res.json().catch(() => ({}));
+                if (!res.ok) return showAlert('Error: ' + (result.error || res.status), 'error');
+                showAlert(okMsg);
+                if (modalId) closeModal(modalId);
                 loadDashboard();
-            } catch (error) {
-                showAlert('Error saving allocation: ' + error, 'error');
-            }
+                return true;
+            } catch (e) { showAlert('Error: ' + e, 'error'); }
         }
 
-        async function updateExpenseCategory(expenseId) {
-            const select = document.getElementById(`expense-category-${expenseId}`);
-            if (!select) return;
-            const categoryId = Number(select.value);
-            try {
-                const response = await fetch(`/api/expenses/${expenseId}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ category_id: categoryId })
-                });
-                const result = await response.json();
-                if (!response.ok) return showAlert('Error: ' + result.error, 'error');
-                showAlert('Expense category updated');
-                loadDashboard();
-            } catch (error) {
-                showAlert('Error updating expense: ' + error, 'error');
-            }
+        function saveAccount() {
+            const name = $('accountName').value.trim(), bal = $('accountBalance').value;
+            if (!name || bal === '') return showAlert('Name and balance are required', 'error');
+            post('/api/accounts', { name, institution: $('accountInstitution').value, type: $('accountType').value, balance: bal, interest_rate: $('accountRate').value }, 'Account added', 'accountModal');
+        }
+        function saveDebt() {
+            const name = $('debtName').value.trim(), bal = $('debtBalance').value;
+            if (!name || bal === '') return showAlert('Name and balance are required', 'error');
+            post('/api/debts', { name, institution: $('debtInstitution').value, type: $('debtType').value, balance: bal, interest_rate: $('debtRate').value, min_payment: $('debtMinPayment').value, due_day: $('debtDueDay').value }, 'Debt added', 'debtModal');
+        }
+        function saveIncome() {
+            const amt = $('incomeAmount').value;
+            if (amt === '') return showAlert('Amount is required', 'error');
+            post('/api/income', { amount: amt, source: $('incomeSource').value, date: $('incomeDate').value, note: $('incomeNote').value }, 'Income logged', 'incomeModal');
+        }
+        function openExpenseModal() { if (data) populateCategoryDropdown(); $('expenseDate').value = todayStr(); openModal('expenseModal'); }
+        function saveExpense() {
+            const amt = $('expenseAmount').value, cat = $('expenseCategory').value;
+            if (amt === '' || !cat) return showAlert('Amount and category are required', 'error');
+            post('/api/expense', { amount: amt, category_id: cat, date: $('expenseDate').value, note: $('expenseNote').value, tags: $('expenseTags').value }, 'Expense added', 'expenseModal');
+        }
+        function saveSub() {
+            const name = $('subName').value.trim(), amt = $('subAmount').value;
+            if (!name || amt === '') return showAlert('Name and amount are required', 'error');
+            post('/api/recurring', { name, amount: amt, cadence: $('subCadence').value, due_day: $('subDueDay').value }, 'Subscription added', 'subModal');
+        }
+        async function deleteSub(id) {
+            await fetch('/api/recurring/' + id, { method: 'DELETE' }); showAlert('Subscription removed'); loadDashboard();
+        }
+        async function deleteGoal(id) {
+            await fetch('/api/goals/' + id, { method: 'DELETE' }); showAlert('Goal removed'); loadDashboard();
         }
 
-        async function saveAccount() {
-            const data = {
-                name: document.getElementById('accountName').value,
-                institution: document.getElementById('accountInstitution').value,
-                type: document.getElementById('accountType').value,
-                balance: document.getElementById('accountBalance').value,
-                interest_rate: document.getElementById('accountRate').value,
-            };
-            if (!data.name || !data.balance) return showAlert('Name and balance are required', 'error');
-            try {
-                const response = await fetch('/api/accounts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                if (!response.ok) throw new Error('Unable to add account');
-                showAlert('Account added!');
-                closeModal('accountModal');
-                loadDashboard();
-                document.getElementById('accountName').value = '';
-                document.getElementById('accountInstitution').value = '';
-                document.getElementById('accountBalance').value = '';
-                document.getElementById('accountRate').value = '';
-            } catch (error) {
-                showAlert('Error saving account: ' + error, 'error');
+        // --- goal modal ---
+        function openGoalModal() { $('goalName').value = ''; renderGoalModalFields(); openModal('goalModal'); }
+        function renderGoalModalFields() {
+            const t = $('goalType').value;
+            const accOpts = (data.accounts || []).map(a => `<option value="${a.id}">${a.name} (${a.type})</option>`).join('');
+            const debtOpts = (data.debts || []).map(d => `<option value="${d.id}">${d.name} (${d.type})</option>`).join('');
+            let html = '';
+            if (t === 'target_balance') {
+                html = `<div class="form-group"><label>Account *</label><select id="goalLink">${accOpts || '<option value="">(no accounts)</option>'}</select></div>
+                    <div class="two"><div class="form-group"><label>Target balance *</label><input id="goalTarget" type="number" step="0.01"></div>
+                    <div class="form-group"><label>By date *</label><input id="goalDate" type="date"></div></div>`;
+            } else if (t === 'contribution_cap') {
+                html = `<div class="two"><div class="form-group"><label>Annual cap *</label><input id="goalCap" type="number" step="0.01" placeholder="7000"></div>
+                    <div class="form-group"><label>Contributed so far</label><input id="goalSoFar" type="number" step="0.01" placeholder="0"></div></div>
+                    <div class="two"><div class="form-group"><label>Account (optional)</label><select id="goalLink"><option value="">(none)</option>${accOpts}</select></div>
+                    <div class="form-group"><label>By date *</label><input id="goalDate" type="date"></div></div>`;
+            } else if (t === 'debt_payoff') {
+                html = `<div class="form-group"><label>Debt *</label><select id="goalLink">${debtOpts || '<option value="">(no debts)</option>'}</select></div>
+                    <div class="form-group"><label>Paid off by *</label><input id="goalDate" type="date"></div>`;
+            } else {
+                html = `<div class="two"><div class="form-group"><label>Target amount *</label><input id="goalTarget" type="number" step="0.01"></div>
+                    <div class="form-group"><label>By date *</label><input id="goalDate" type="date"></div></div>`;
             }
+            $('goalFields').innerHTML = html;
+        }
+        function saveGoal() {
+            const type = $('goalType').value, name = $('goalName').value.trim();
+            if (!name) return showAlert('Goal name is required', 'error');
+            const body = { type, name };
+            const date = $('goalDate') ? $('goalDate').value : '';
+            if (type === 'target_balance') {
+                if (!$('goalLink').value || !$('goalTarget').value || !date) return showAlert('Account, target, and date required', 'error');
+                Object.assign(body, { link_type: 'account', link_id: $('goalLink').value, target_amount: $('goalTarget').value, target_date: date });
+            } else if (type === 'contribution_cap') {
+                if (!$('goalCap').value || !date) return showAlert('Cap and date required', 'error');
+                Object.assign(body, { contribution_limit: $('goalCap').value, contributed_so_far: $('goalSoFar').value || 0, target_date: date });
+                if ($('goalLink').value) Object.assign(body, { link_type: 'account', link_id: $('goalLink').value });
+            } else if (type === 'debt_payoff') {
+                if (!$('goalLink').value || !date) return showAlert('Debt and date required', 'error');
+                Object.assign(body, { link_type: 'debt', link_id: $('goalLink').value, target_amount: 0, target_date: date });
+            } else {
+                if (!$('goalTarget').value || !date) return showAlert('Target and date required', 'error');
+                Object.assign(body, { target_amount: $('goalTarget').value, target_date: date });
+            }
+            post('/api/goals', body, 'Goal added', 'goalModal');
         }
 
-        async function saveDebt() {
-            const data = {
-                name: document.getElementById('debtName').value,
-                institution: document.getElementById('debtInstitution').value,
-                type: document.getElementById('debtType').value,
-                balance: document.getElementById('debtBalance').value,
-                interest_rate: document.getElementById('debtRate').value,
-                min_payment: document.getElementById('debtMinPayment').value,
-                due_day: document.getElementById('debtDueDay').value,
-            };
-            if (!data.name || !data.balance) return showAlert('Name and balance are required', 'error');
-            try {
-                const response = await fetch('/api/debts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                if (!response.ok) throw new Error('Unable to add debt');
-                showAlert('Debt added!');
-                closeModal('debtModal');
-                loadDashboard();
-                document.getElementById('debtName').value = '';
-                document.getElementById('debtInstitution').value = '';
-                document.getElementById('debtBalance').value = '';
-            } catch (error) {
-                showAlert('Error saving debt: ' + error, 'error');
-            }
+        // --- income profile ---
+        function openProfileModal() {
+            if (data.income_profile) { $('profileAmount').value = data.income_profile.expected_amount; $('profileCadence').value = data.income_profile.cadence; }
+            openModal('incomeProfileModal');
+        }
+        function saveProfile() {
+            post('/api/income-profile', { expected_amount: $('profileAmount').value, cadence: $('profileCadence').value }, 'Income updated', 'incomeProfileModal');
         }
 
-        async function savePaycheck() {
-            const data = {
-                amount: document.getElementById('paycheckAmount').value,
-                date: document.getElementById('paycheckDate').value,
-                note: document.getElementById('paycheckNote').value,
-            };
-            if (!data.amount) return showAlert('Amount is required', 'error');
-            try {
-                const response = await fetch('/api/paycheck', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                const result = await response.json();
-                if (!response.ok) return showAlert('Error: ' + result.error, 'error');
-                showAlert('Paycheck added and allocated!');
-                closeModal('paycheckModal');
-                loadDashboard();
-                document.getElementById('paycheckAmount').value = '';
-                document.getElementById('paycheckNote').value = '';
-            } catch (error) {
-                showAlert('Error saving paycheck: ' + error, 'error');
-            }
+        // --- expense category update ---
+        async function updateExpenseCategory(id) {
+            const sel = $('exp-cat-' + id); if (!sel) return;
+            post('/api/expenses/' + id, { category_id: Number(sel.value) }, 'Expense updated');
         }
 
-        async function saveExpense() {
-            const data = {
-                amount: document.getElementById('expenseAmount').value,
-                category_id: document.getElementById('expenseCategory').value,
-                date: document.getElementById('expenseDate').value,
-                note: document.getElementById('expenseNote').value,
-                tags: document.getElementById('expenseTags').value,
-            };
-            if (!data.amount || !data.category_id) return showAlert('Amount and category are required', 'error');
-            try {
-                const response = await fetch('/api/expense', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                const result = await response.json();
-                if (!response.ok) return showAlert('Error: ' + result.error, 'error');
-                showAlert('Expense added!');
-                closeModal('expenseModal');
-                loadDashboard();
-                document.getElementById('expenseAmount').value = '';
-                document.getElementById('expenseNote').value = '';
-                document.getElementById('expenseTags').value = '';
-            } catch (error) {
-                showAlert('Error saving expense: ' + error, 'error');
+        // --- allocate ---
+        function openAllocateModal(accountId) {
+            const a = (data.accounts || []).find(x => Number(x.id) === Number(accountId));
+            if (!a) return showAlert('Account not found', 'error');
+            $('allocateAccountId').value = a.id;
+            $('allocateSourceLabel').textContent = `${a.name} (${a.type}) available: ${money(a.balance)}`;
+            $('allocAmount').value = ''; $('allocNote').value = ''; $('allocDate').value = todayStr();
+            $('allocTargetType').value = 'expense'; populateAllocTargets(); openModal('allocateModal');
+        }
+        function populateAllocTargets() {
+            const sel = $('allocTarget'), type = $('allocTargetType').value; sel.innerHTML = '';
+            if (type === 'expense') {
+                const pend = data.pending_expenses || [];
+                sel.innerHTML = pend.length ? pend.map(e => `<option value="expense:${e.id}">${e.date} | ${e.category_name || 'Expense'} | ${money(e.remaining)} left</option>`).join('') : '<option value="">No unpaid expenses</option>';
+            } else {
+                const debts = (data.debts || []).filter(d => Number(d.balance) > 0);
+                sel.innerHTML = debts.length ? debts.map(d => `<option value="debt:${d.id}">${d.name} | ${money(d.balance)}</option>`).join('') : '<option value="">No open debts</option>';
             }
         }
+        function saveAllocation() {
+            const accountId = Number($('allocateAccountId').value), raw = $('allocTarget').value, amount = Number($('allocAmount').value);
+            if (!accountId || !raw || !amount) return showAlert('Account, target, and amount required', 'error');
+            const [target_type, target_id] = raw.split(':');
+            post('/api/allocations/account', { account_id: accountId, target_type, target_id: Number(target_id), amount, date: $('allocDate').value, note: $('allocNote').value }, 'Allocation done', 'allocateModal');
+        }
 
-        window.addEventListener('load', () => {
-            fetch('/api/dashboard')
-                .then(r => r.json())
-                .then(data => {
-                    if (data.categories && data.categories.length > 0) {
-                        dashboardData = data;
-                        renderDashboard(data);
-                        populateCategoryDropdown(data.all_categories || []);
-                    } else {
-                        window.location.href = '/setup';
-                    }
-                })
-                .catch(error => showAlert('Error loading dashboard: ' + error, 'error'));
-        });
+        $('incomeDate').value = todayStr();
+        loadDashboard();
     </script>
 </body>
 </html>

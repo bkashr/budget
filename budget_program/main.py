@@ -6,16 +6,24 @@ from datetime import date
 from typing import Callable
 
 from database import execute, fetchall, fetchone, has_initial_data, init_db
-from services.allocations import add_expense, add_paycheck, allocation_total_is_valid
+from services.allocations import add_expense
+from services.budget import (
+    add_income,
+    add_recurring,
+    allocation_total_is_valid,
+    list_recurring,
+    set_income_profile,
+)
 from services.goals import add_goal, delete_goal, get_goal_progress, list_goals, update_goal
 from services.reports import print_dashboard, print_history
 
 DEFAULT_CATEGORIES = [
-    ("Savings & Debt", 40.0),
-    ("Groceries", 20.0),
-    ("Entertainment", 15.0),
+    ("Groceries", 30.0),
+    ("Eating Out", 15.0),
+    ("Transport / Gas", 15.0),
     ("Clothing", 10.0),
-    ("Misc", 15.0),
+    ("Supplements", 10.0),
+    ("Personal / Misc", 20.0),
 ]
 
 
@@ -121,7 +129,81 @@ def setup_wizard() -> None:
         )
         print("✓ Debt added")
 
+    setup_goals_wizard()
+    setup_subscriptions_wizard()
+    setup_income_wizard()
     set_initial_categories()
+
+
+def setup_goals_wizard() -> None:
+    print("\nAdd goals (leave name blank when done).")
+    print("Types: target_balance, contribution_cap, debt_payoff, custom")
+    while True:
+        name = prompt_text("Goal name (blank to finish)")
+        if not name:
+            break
+        add_goal_cli(name)
+        print("✓ Goal added")
+
+
+def add_goal_cli(name: str) -> None:
+    gtype = prompt_text("Goal type (target_balance/contribution_cap/debt_payoff/custom)", "target_balance")
+    link_type = None
+    link_id = None
+    contribution_limit = None
+    contributed_so_far = None
+    target_amount = 0.0
+
+    if gtype == "target_balance":
+        list_accounts()
+        link_type = "account"
+        link_id = prompt_int("Account ID")
+        target_amount = prompt_float("Target balance")
+    elif gtype == "debt_payoff":
+        list_debts()
+        link_type = "debt"
+        link_id = prompt_int("Debt ID")
+        target_amount = 0.0
+    elif gtype == "contribution_cap":
+        contribution_limit = prompt_float("Annual cap", 7000.0)
+        contributed_so_far = prompt_float("Contributed so far", 0.0)
+    else:
+        target_amount = prompt_float("Target amount")
+
+    target_date = prompt_date("Target date (YYYY-MM-DD, blank for none)", default_today=False, allow_blank=True)
+    add_goal(
+        goal_type=gtype,
+        name=name,
+        link_type=link_type,
+        link_id=link_id,
+        target_amount=target_amount,
+        target_date=target_date,
+        contribution_limit=contribution_limit,
+        contributed_so_far=contributed_so_far,
+    )
+
+
+def setup_subscriptions_wizard() -> None:
+    print("\nAdd recurring spending / subscriptions (leave name blank when done).")
+    while True:
+        name = prompt_text("Subscription name (blank to finish)")
+        if not name:
+            break
+        amount = prompt_float("Amount")
+        cadence = prompt_text("Cadence (weekly/biweekly/monthly/quarterly/yearly)", "monthly")
+        due_raw = prompt_text("Due day 1-31 (optional)", "")
+        add_recurring(name=name, amount=amount, cadence=cadence, due_day=int(due_raw) if due_raw else None)
+        print("✓ Subscription added")
+
+
+def setup_income_wizard() -> None:
+    print("\nExpected income (optional). Leave amount blank to skip and log income ad-hoc instead.")
+    amount_raw = prompt_text("Expected amount", "")
+    if not amount_raw:
+        return
+    cadence = prompt_text("How often (weekly/biweekly/semimonthly/monthly)", "biweekly")
+    set_income_profile(expected_amount=float(amount_raw), cadence=cadence)
+    print("✓ Expected income saved")
 
 
 def set_initial_categories() -> None:
@@ -197,12 +279,46 @@ def list_categories() -> None:
         print("  (none)")
 
 
-def add_paycheck_cli() -> None:
-    paycheck_date = prompt_date("Paycheck date")
-    amount = prompt_float("Paycheck net amount")
+def add_income_cli() -> None:
+    income_date = prompt_date("Income date")
+    amount = prompt_float("Amount received")
+    source = prompt_text("Source", "")
     note = prompt_text("Note", "")
-    pid = add_paycheck(amount=amount, paycheck_date=paycheck_date, note=note)
-    print(f"Paycheck {pid} added and allocated.")
+    iid = add_income(amount=amount, income_date=income_date, source=source, note=note)
+    print(f"Income {iid} logged.")
+
+
+def manage_subscriptions() -> None:
+    while True:
+        subs = list_recurring(active_only=True)
+        print("\nSubscriptions")
+        if not subs:
+            print("  (none)")
+        for s in subs:
+            print(f"  [{s['id']}] {s['name']} ${s['amount']:.2f}/{s['cadence']} (~${s['monthly']:.2f}/mo)")
+        print("\nManage Subscriptions: 1) Add 2) Delete 3) Back")
+        choice = prompt_text("Choice", "3")
+        if choice == "1":
+            name = prompt_text("Name")
+            if not name:
+                continue
+            amount = prompt_float("Amount")
+            cadence = prompt_text("Cadence (weekly/biweekly/monthly/quarterly/yearly)", "monthly")
+            add_recurring(name=name, amount=amount, cadence=cadence)
+        elif choice == "2":
+            from services.budget import delete_recurring
+            delete_recurring(prompt_int("Subscription ID to delete"))
+        elif choice == "3":
+            return
+
+
+def set_income_cli() -> None:
+    amount_raw = prompt_text("Expected amount (blank to skip)", "")
+    if not amount_raw:
+        return
+    cadence = prompt_text("How often (weekly/biweekly/semimonthly/monthly)", "biweekly")
+    set_income_profile(expected_amount=float(amount_raw), cadence=cadence)
+    print("Expected income saved.")
 
 
 def add_expense_cli() -> None:
@@ -460,7 +576,7 @@ def goals_menu() -> None:
 def menu_loop() -> None:
     actions: dict[str, tuple[str, Callable[[], None]]] = {
         "1": ("dashboard", print_dashboard),
-        "2": ("add-paycheck", add_paycheck_cli),
+        "2": ("add-income", add_income_cli),
         "3": ("add-expense", add_expense_cli),
         "4": ("update-account-balance", lambda: update_balance("account")),
         "5": ("update-debt-balance", lambda: update_balance("debt")),
@@ -468,14 +584,16 @@ def menu_loop() -> None:
         "7": ("manage-accounts", manage_accounts),
         "8": ("manage-debts", manage_debts),
         "9": ("goals", goals_menu),
-        "10": ("history", lambda: print_history(prompt_int("Last N records", 10) or 10)),
+        "10": ("manage-subscriptions", manage_subscriptions),
+        "11": ("set-expected-income", set_income_cli),
+        "12": ("history", lambda: print_history(prompt_int("Last N records", 10) or 10)),
     }
 
     while True:
         print(
             "\n=== Personal Budget CLI ===\n"
             "1) dashboard\n"
-            "2) add-paycheck\n"
+            "2) add-income\n"
             "3) add-expense\n"
             "4) update-account-balance\n"
             "5) update-debt-balance\n"
@@ -483,7 +601,9 @@ def menu_loop() -> None:
             "7) manage-accounts\n"
             "8) manage-debts\n"
             "9) goals\n"
-            "10) history\n"
+            "10) manage-subscriptions\n"
+            "11) set-expected-income\n"
+            "12) history\n"
             "0) exit"
         )
         choice = prompt_text("Select option", "1")
