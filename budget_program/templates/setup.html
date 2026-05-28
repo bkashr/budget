@@ -5,582 +5,359 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget Setup</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            min-height: 100vh; padding: 20px; color: #333;
         }
-
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section h2 {
-            color: #667eea;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-weight: 500;
-            color: #333;
-            margin-bottom: 5px;
-            font-size: 0.95em;
-        }
-
-        input, select {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-
-        .account-item, .debt-item {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            border-left: 4px solid #667eea;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .account-item .name, .debt-item .name {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .account-item .delete, .debt-item .delete {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        .account-item .delete:hover, .debt-item .delete:hover {
-            background: #c0392b;
-        }
-
-        .category-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr auto;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-
-        .category-row input {
-            padding: 10px;
-        }
-
-        .category-row button {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .category-row button:hover {
-            background: #c0392b;
-        }
-
-        .allocation-total {
-            text-align: right;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-
-        .allocation-total.valid {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .allocation-total.invalid {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        button {
-            flex: 1;
-            padding: 12px;
-            font-size: 1em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #7f8c8d;
-        }
-
-        .btn-add {
-            background: #27ae60;
-            color: white;
-            width: auto;
-            padding: 10px 20px;
-        }
-
-        .btn-add:hover {
-            background: #229954;
-        }
-
-        .add-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-
-        .step {
-            text-align: center;
-            flex: 1;
-        }
-
-        .step.active {
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        .step.completed {
-            color: #27ae60;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-        }
+        .container { max-width: 680px; margin: 30px auto; background: white; border-radius: 15px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h1 { color: #667eea; text-align: center; margin-bottom: 6px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 24px; }
+        .steps { display: flex; gap: 4px; margin-bottom: 28px; }
+        .step-pip { flex: 1; height: 6px; border-radius: 3px; background: #e6e6f0; }
+        .step-pip.active { background: #667eea; }
+        .step-pip.done { background: #27ae60; }
+        .step-title { font-size: 0.85em; color: #999; text-align: center; margin-bottom: 18px; }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .panel h2 { color: #667eea; font-size: 1.3em; margin-bottom: 6px; }
+        .panel .hint { color: #777; font-size: 0.92em; margin-bottom: 18px; }
+        .form-group { margin-bottom: 14px; display: flex; flex-direction: column; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        label { font-weight: 500; margin-bottom: 5px; font-size: 0.9em; }
+        input, select { padding: 11px; border: 1px solid #ddd; border-radius: 6px; font-size: 1em; }
+        input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 5px rgba(102,126,234,0.3); }
+        .item { background: #f5f5fb; padding: 12px 14px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid #667eea; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .item .name { font-weight: 500; }
+        .item .sub { color: #777; font-size: 0.85em; }
+        .item .del { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+        .btn { padding: 12px 18px; font-size: 1em; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all .2s; }
+        .btn-add { background: #27ae60; color: white; margin-top: 6px; }
+        .btn-add:hover { background: #229954; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; }
+        .btn-primary:disabled { background: #bbb; cursor: not-allowed; }
+        .btn-secondary { background: #95a5a6; color: white; }
+        .nav { display: flex; justify-content: space-between; margin-top: 28px; }
+        .cat-row { display: grid; grid-template-columns: 2fr 90px auto; gap: 10px; margin-bottom: 8px; align-items: center; }
+        .alloc-total { text-align: right; font-weight: bold; padding: 10px; border-radius: 6px; margin-top: 8px; }
+        .alloc-total.valid { background: #d4edda; color: #155724; }
+        .alloc-total.invalid { background: #f8d7da; color: #721c24; }
+        .alert { padding: 12px 14px; border-radius: 6px; margin-bottom: 16px; background: #f8d7da; color: #721c24; }
+        .empty { color: #999; font-style: italic; padding: 6px 0; }
+        .breakdown { background: #f5f5fb; border-radius: 8px; padding: 16px; margin-top: 14px; }
+        .breakdown .line { display: flex; justify-content: space-between; padding: 4px 0; }
+        .breakdown .line.total { border-top: 1px solid #ddd; margin-top: 6px; padding-top: 8px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏦 Budget Setup Wizard</h1>
-        <p class="subtitle">Let's get your budget set up step by step</p>
+        <h1>Budget Setup</h1>
+        <p class="subtitle">Let's build your plan step by step.</p>
+        <div class="steps" id="pips"></div>
+        <div class="step-title" id="stepTitle"></div>
+        <div id="alert"></div>
 
-        <div id="alert-container"></div>
-
-        <div id="setup-content">
-            <!-- Step 1: Accounts -->
-            <div class="section">
-                <h2>1. Bank Accounts</h2>
-                <p style="color: #666; margin-bottom: 15px; font-size: 0.95em;">Add all your bank accounts and savings</p>
-                
-                <div class="form-group">
-                    <label>Account Name *</label>
-                    <input type="text" id="newAccountName" placeholder="e.g., Checking, Savings">
+        <!-- Step 1: Accounts -->
+        <div class="panel" data-step="1">
+            <h2>1. Your accounts</h2>
+            <p class="hint">How much money do you have right now? Add each account &mdash; checking, savings, HYSA, Roth IRA, brokerage, cash.</p>
+            <div class="row">
+                <div class="form-group"><label>Name *</label><input id="acc_name" placeholder="e.g., Main Checking"></div>
+                <div class="form-group"><label>Type *</label>
+                    <select id="acc_type"><option>checking</option><option>savings</option><option>hysa</option><option>roth_ira</option><option>401k</option><option>brokerage</option><option>cash</option></select>
                 </div>
-                <div class="form-group">
-                    <label>Institution</label>
-                    <input type="text" id="newAccountInstitution" placeholder="e.g., Chase, Bank of America">
-                </div>
-                <div class="form-group">
-                    <label>Type *</label>
-                    <select id="newAccountType">
-                        <option>checking</option>
-                        <option>savings</option>
-                        <option>hysa</option>
-                        <option>401k</option>
-                        <option>roth</option>
-                        <option>brokerage</option>
-                        <option>cash</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Current Balance *</label>
-                    <input type="number" id="newAccountBalance" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Interest Rate (%)</label>
-                    <input type="number" id="newAccountRate" step="0.01" placeholder="0.00">
-                </div>
-                <button class="btn-add" onclick="addAccount()">+ Add Account</button>
-
-                <div id="accounts-list" style="margin-top: 15px;"></div>
             </div>
-
-            <!-- Step 2: Debts -->
-            <div class="section">
-                <h2>2. Debts</h2>
-                <p style="color: #666; margin-bottom: 15px; font-size: 0.95em;">Add credit cards, loans, and other debts</p>
-
-                <div class="form-group">
-                    <label>Debt Name *</label>
-                    <input type="text" id="newDebtName" placeholder="e.g., Credit Card, Student Loan">
-                </div>
-                <div class="form-group">
-                    <label>Institution/Person</label>
-                    <input type="text" id="newDebtInstitution" placeholder="e.g., Capital One, Sallie Mae">
-                </div>
-                <div class="form-group">
-                    <label>Type *</label>
-                    <select id="newDebtType">
-                        <option>personal</option>
-                        <option>credit_card</option>
-                        <option>loan</option>
-                        <option>medical</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Current Balance *</label>
-                    <input type="number" id="newDebtBalance" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Interest Rate (%)</label>
-                    <input type="number" id="newDebtRate" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Min Payment</label>
-                    <input type="number" id="newDebtMinPayment" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Due Day (1-31)</label>
-                    <input type="number" id="newDebtDueDay" min="1" max="31" placeholder="15">
-                </div>
-                <button class="btn-add" onclick="addDebt()">+ Add Debt</button>
-
-                <div id="debts-list" style="margin-top: 15px;"></div>
+            <div class="row">
+                <div class="form-group"><label>Institution</label><input id="acc_inst" placeholder="e.g., Ally"></div>
+                <div class="form-group"><label>Current balance *</label><input id="acc_bal" type="number" step="0.01" placeholder="0.00"></div>
             </div>
+            <div class="form-group"><label>Interest rate % (optional)</label><input id="acc_rate" type="number" step="0.01" placeholder="e.g., 4.5"></div>
+            <button class="btn btn-add" onclick="addAccount()">+ Add account</button>
+            <div id="list_accounts" style="margin-top:14px;"></div>
+        </div>
 
-            <!-- Step 3: Categories -->
-            <div class="section">
-                <h2>3. Budget Categories</h2>
-                <p style="color: #666; margin-bottom: 15px; font-size: 0.95em;">Set up spending categories (allocations must total 100%)</p>
-
-                <div id="categories-list">
-                    <div class="category-row">
-                        <input type="text" placeholder="Category name" value="Savings & Debt" readonly>
-                        <input type="number" placeholder="%" step="0.01" value="40" class="category-pct">
-                    </div>
-                    <div class="category-row">
-                        <input type="text" placeholder="Category name" value="Groceries" readonly>
-                        <input type="number" placeholder="%" step="0.01" value="20" class="category-pct">
-                    </div>
-                    <div class="category-row">
-                        <input type="text" placeholder="Category name" value="Entertainment" readonly>
-                        <input type="number" placeholder="%" step="0.01" value="15" class="category-pct">
-                    </div>
-                    <div class="category-row">
-                        <input type="text" placeholder="Category name" value="Clothing" readonly>
-                        <input type="number" placeholder="%" step="0.01" value="10" class="category-pct">
-                    </div>
-                    <div class="category-row">
-                        <input type="text" placeholder="Category name" value="Misc" readonly>
-                        <input type="number" placeholder="%" step="0.01" value="15" class="category-pct">
-                    </div>
+        <!-- Step 2: Debts -->
+        <div class="panel" data-step="2">
+            <h2>2. Your debts</h2>
+            <p class="hint">Add what you owe &mdash; student loans, car loan, credit cards, medical. No debt? Just continue.</p>
+            <div class="row">
+                <div class="form-group"><label>Name *</label><input id="debt_name" placeholder="e.g., Student Loan"></div>
+                <div class="form-group"><label>Type *</label>
+                    <select id="debt_type"><option>loan</option><option>credit_card</option><option>student_loan</option><option>auto</option><option>medical</option><option>personal</option></select>
                 </div>
+            </div>
+            <div class="row">
+                <div class="form-group"><label>Institution / lender</label><input id="debt_inst" placeholder="e.g., Sallie Mae"></div>
+                <div class="form-group"><label>Current balance *</label><input id="debt_bal" type="number" step="0.01" placeholder="0.00"></div>
+            </div>
+            <div class="row">
+                <div class="form-group"><label>Interest rate %</label><input id="debt_rate" type="number" step="0.01" placeholder="e.g., 6.8"></div>
+                <div class="form-group"><label>Min payment</label><input id="debt_min" type="number" step="0.01" placeholder="0.00"></div>
+            </div>
+            <div class="form-group"><label>Due day (1-31)</label><input id="debt_due" type="number" min="1" max="31" placeholder="15"></div>
+            <button class="btn btn-add" onclick="addDebt()">+ Add debt</button>
+            <div id="list_debts" style="margin-top:14px;"></div>
+        </div>
 
-                <div class="allocation-total valid">
-                    Total Allocation: <span id="allocation-total">100%</span>
+        <!-- Step 3: Goals -->
+        <div class="panel" data-step="3">
+            <h2>3. Your goals</h2>
+            <p class="hint">What are you working toward? e.g. reach $10k in your HYSA, max your Roth IRA, or pay off a debt by a date.</p>
+            <div class="form-group"><label>Goal type *</label>
+                <select id="goal_type" onchange="renderGoalFields()">
+                    <option value="target_balance">Reach a balance in an account</option>
+                    <option value="contribution_cap">Contribute up to a cap (e.g., Roth IRA)</option>
+                    <option value="debt_payoff">Pay off a debt</option>
+                    <option value="custom">Custom savings target</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Goal name *</label><input id="goal_name" placeholder="e.g., $10k emergency fund"></div>
+            <div id="goal_fields"></div>
+            <button class="btn btn-add" onclick="addGoal()">+ Add goal</button>
+            <div id="list_goals" style="margin-top:14px;"></div>
+        </div>
+
+        <!-- Step 4: Subscriptions -->
+        <div class="panel" data-step="4">
+            <h2>4. Recurring spending</h2>
+            <p class="hint">Consistent bills and subscriptions &mdash; Netflix, Amazon Prime, gym, phone, rent. These are reserved off the top before budgeting.</p>
+            <div class="row">
+                <div class="form-group"><label>Name *</label><input id="sub_name" placeholder="e.g., Netflix"></div>
+                <div class="form-group"><label>Amount *</label><input id="sub_amt" type="number" step="0.01" placeholder="0.00"></div>
+            </div>
+            <div class="row">
+                <div class="form-group"><label>Billing cadence *</label>
+                    <select id="sub_cad"><option value="monthly">monthly</option><option value="weekly">weekly</option><option value="biweekly">biweekly</option><option value="quarterly">quarterly</option><option value="yearly">yearly</option></select>
                 </div>
-
-                <button class="btn-add" onclick="addCategory()" style="margin-top: 10px;">+ Add Category</button>
+                <div class="form-group"><label>Due day (optional)</label><input id="sub_due" type="number" min="1" max="31" placeholder="1"></div>
             </div>
+            <button class="btn btn-add" onclick="addSub()">+ Add subscription</button>
+            <div id="list_subs" style="margin-top:14px;"></div>
+        </div>
 
-            <!-- Complete Setup -->
-            <div class="button-group" style="margin-top: 40px;">
-                <button class="btn-primary" onclick="completeSetup()">Complete Setup</button>
+        <!-- Step 5: Income -->
+        <div class="panel" data-step="5">
+            <h2>5. Your income</h2>
+            <p class="hint">If you earn a steady amount, set it here so we can pace your goals and project your budget. Irregular income (tips, gig work)? Skip this &mdash; you can log money whenever it lands.</p>
+            <div class="row">
+                <div class="form-group"><label>Expected amount</label><input id="inc_amt" type="number" step="0.01" placeholder="e.g., 2000"></div>
+                <div class="form-group"><label>How often</label>
+                    <select id="inc_cad"><option value="biweekly">every 2 weeks</option><option value="weekly">weekly</option><option value="semimonthly">twice a month</option><option value="monthly">monthly</option></select>
+                </div>
             </div>
+            <p class="hint">Leave the amount blank to skip and rely on logging income as you receive it.</p>
+        </div>
+
+        <!-- Step 6: Budget % -->
+        <div class="panel" data-step="6">
+            <h2>6. Budget split</h2>
+            <p class="hint">After subscriptions and goal savings are reserved, the rest is split across these categories. Percentages must total 100%.</p>
+            <div id="list_cats"></div>
+            <div class="alloc-total valid" id="allocBox">Total: <span id="allocTotal">100%</span></div>
+            <button class="btn btn-add" onclick="addCatRow('', 0)">+ Add category</button>
+            <div class="breakdown" id="previewBox"></div>
+        </div>
+
+        <div class="nav">
+            <button class="btn btn-secondary" id="backBtn" onclick="prevStep()">Back</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next</button>
         </div>
     </div>
 
     <script>
-        let accounts = [];
-        let debts = [];
+        const TOTAL_STEPS = 6;
+        const STEP_TITLES = ["Accounts", "Debts", "Goals", "Subscriptions", "Income", "Budget split"];
+        let step = 1;
+        const state = { accounts: [], debts: [], goals: [], subscriptions: [], categories: [
+            ["Groceries", 30], ["Eating Out", 15], ["Transport / Gas", 15],
+            ["Clothing", 10], ["Supplements", 10], ["Personal / Misc", 20]
+        ] };
 
-        function showAlert(message, type = 'error') {
-            const alertContainer = document.getElementById('alert-container');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.textContent = message;
-            alertContainer.appendChild(alertDiv);
-            setTimeout(() => alertDiv.remove(), 3000);
+        const $ = id => document.getElementById(id);
+        const money = n => '$' + Number(n || 0).toFixed(2);
+        function val(id) { return $(id).value.trim(); }
+        function clear(...ids) { ids.forEach(i => $(i).value = ''); }
+        function alertMsg(msg) {
+            $('alert').innerHTML = msg ? `<div class="alert">${msg}</div>` : '';
+            if (msg) setTimeout(() => { $('alert').innerHTML = ''; }, 4000);
         }
 
+        // --- Step 1: accounts ---
         function addAccount() {
-            const name = document.getElementById('newAccountName').value;
-            const institution = document.getElementById('newAccountInstitution').value;
-            const type = document.getElementById('newAccountType').value;
-            const balance = document.getElementById('newAccountBalance').value;
-            const rate = document.getElementById('newAccountRate').value;
-
-            if (!name || !balance) {
-                showAlert('Name and balance are required');
-                return;
-            }
-
-            accounts.push({ name, institution, type, balance, rate });
-            renderAccounts();
-
-            // Clear form
-            document.getElementById('newAccountName').value = '';
-            document.getElementById('newAccountInstitution').value = '';
-            document.getElementById('newAccountBalance').value = '';
-            document.getElementById('newAccountRate').value = '';
+            const name = val('acc_name'), bal = val('acc_bal');
+            if (!name || bal === '') return alertMsg('Account name and balance are required.');
+            state.accounts.push({ name, type: val('acc_type'), institution: val('acc_inst'), balance: bal, interest_rate: val('acc_rate') || null });
+            clear('acc_name', 'acc_inst', 'acc_bal', 'acc_rate'); renderAccounts();
         }
-
         function renderAccounts() {
-            const list = document.getElementById('accounts-list');
-            list.innerHTML = '';
-            accounts.forEach((acc, idx) => {
-                const div = document.createElement('div');
-                div.className = 'account-item';
-                div.innerHTML = `
-                    <span class="name">${acc.name} (${acc.type}) - $${parseFloat(acc.balance).toFixed(2)}</span>
-                    <button class="delete" onclick="removeAccount(${idx})">Remove</button>
-                `;
-                list.appendChild(div);
-            });
+            $('list_accounts').innerHTML = state.accounts.map((a, i) =>
+                `<div class="item"><span><span class="name">${a.name}</span> <span class="sub">(${a.type})</span><div class="sub">${money(a.balance)}</div></span><button class="del" onclick="state.accounts.splice(${i},1);renderAccounts()">Remove</button></div>`
+            ).join('') || '<div class="empty">No accounts yet.</div>';
         }
 
-        function removeAccount(idx) {
-            accounts.splice(idx, 1);
-            renderAccounts();
-        }
-
+        // --- Step 2: debts ---
         function addDebt() {
-            const name = document.getElementById('newDebtName').value;
-            const institution = document.getElementById('newDebtInstitution').value;
-            const type = document.getElementById('newDebtType').value;
-            const balance = document.getElementById('newDebtBalance').value;
-            const rate = document.getElementById('newDebtRate').value;
-            const minPayment = document.getElementById('newDebtMinPayment').value;
-            const dueDay = document.getElementById('newDebtDueDay').value;
-
-            if (!name || !balance) {
-                showAlert('Name and balance are required');
-                return;
-            }
-
-            debts.push({ name, institution, type, balance, rate, minPayment, dueDay });
-            renderDebts();
-
-            // Clear form
-            document.getElementById('newDebtName').value = '';
-            document.getElementById('newDebtInstitution').value = '';
-            document.getElementById('newDebtBalance').value = '';
-            document.getElementById('newDebtRate').value = '';
-            document.getElementById('newDebtMinPayment').value = '';
-            document.getElementById('newDebtDueDay').value = '';
+            const name = val('debt_name'), bal = val('debt_bal');
+            if (!name || bal === '') return alertMsg('Debt name and balance are required.');
+            state.debts.push({ name, type: val('debt_type'), institution: val('debt_inst'), balance: bal,
+                interest_rate: val('debt_rate') || null, min_payment: val('debt_min') || null, due_day: val('debt_due') || null });
+            clear('debt_name', 'debt_inst', 'debt_bal', 'debt_rate', 'debt_min', 'debt_due'); renderDebts();
         }
-
         function renderDebts() {
-            const list = document.getElementById('debts-list');
-            list.innerHTML = '';
-            debts.forEach((debt, idx) => {
-                const div = document.createElement('div');
-                div.className = 'debt-item';
-                div.innerHTML = `
-                    <span class="name">${debt.name} (${debt.type}) - $${parseFloat(debt.balance).toFixed(2)}</span>
-                    <button class="delete" onclick="removeDebt(${idx})">Remove</button>
-                `;
-                list.appendChild(div);
-            });
+            $('list_debts').innerHTML = state.debts.map((d, i) =>
+                `<div class="item"><span><span class="name">${d.name}</span> <span class="sub">(${d.type})</span><div class="sub">${money(d.balance)}</div></span><button class="del" onclick="state.debts.splice(${i},1);renderDebts()">Remove</button></div>`
+            ).join('') || '<div class="empty">No debts &mdash; nice.</div>';
         }
 
-        function removeDebt(idx) {
-            debts.splice(idx, 1);
-            renderDebts();
-        }
-
-        function addCategory() {
-            const list = document.getElementById('categories-list');
-            const row = document.createElement('div');
-            row.className = 'category-row';
-            row.innerHTML = `
-                <input type="text" placeholder="Category name" value="" class="category-name">
-                <input type="number" placeholder="%" step="0.01" value="0" class="category-pct">
-                <button onclick="this.parentNode.remove(); updateAllocationTotal();">✕</button>
-            `;
-            list.appendChild(row);
-            updateAllocationTotal();
-        }
-
-        function updateAllocationTotal() {
-            const inputs = document.querySelectorAll('.category-pct');
-            let total = 0;
-            inputs.forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-            
-            const display = document.getElementById('allocation-total');
-            const container = display.parentElement;
-            display.textContent = total.toFixed(2) + '%';
-            
-            if (Math.abs(total - 100) <= 0.01) {
-                container.className = 'allocation-total valid';
+        // --- Step 3: goals ---
+        function renderGoalFields() {
+            const t = $('goal_type').value;
+            const accOpts = state.accounts.map((a, i) => `<option value="${i}">${a.name} (${a.type})</option>`).join('');
+            const debtOpts = state.debts.map((d, i) => `<option value="${i}">${d.name} (${d.type})</option>`).join('');
+            let html = '';
+            if (t === 'target_balance') {
+                html = `<div class="form-group"><label>Account *</label><select id="goal_link">${accOpts || '<option value="">(add an account first)</option>'}</select></div>
+                    <div class="row"><div class="form-group"><label>Target balance *</label><input id="goal_target" type="number" step="0.01" placeholder="10000"></div>
+                    <div class="form-group"><label>By date *</label><input id="goal_date" type="date"></div></div>`;
+            } else if (t === 'contribution_cap') {
+                html = `<div class="row"><div class="form-group"><label>Annual cap *</label><input id="goal_cap" type="number" step="0.01" placeholder="7000"></div>
+                    <div class="form-group"><label>Contributed so far</label><input id="goal_sofar" type="number" step="0.01" placeholder="0"></div></div>
+                    <div class="row"><div class="form-group"><label>Account (optional)</label><select id="goal_link"><option value="">(none)</option>${accOpts}</select></div>
+                    <div class="form-group"><label>By date *</label><input id="goal_date" type="date"></div></div>`;
+            } else if (t === 'debt_payoff') {
+                html = `<div class="form-group"><label>Debt *</label><select id="goal_link">${debtOpts || '<option value="">(add a debt first)</option>'}</select></div>
+                    <div class="form-group"><label>Paid off by *</label><input id="goal_date" type="date"></div>`;
             } else {
-                container.className = 'allocation-total invalid';
+                html = `<div class="row"><div class="form-group"><label>Target amount *</label><input id="goal_target" type="number" step="0.01" placeholder="5000"></div>
+                    <div class="form-group"><label>By date *</label><input id="goal_date" type="date"></div></div>`;
             }
+            $('goal_fields').innerHTML = html;
+        }
+        function addGoal() {
+            const type = $('goal_type').value, name = val('goal_name');
+            if (!name) return alertMsg('Goal name is required.');
+            const g = { type, name };
+            const date = $('goal_date') ? $('goal_date').value : '';
+            if (type === 'target_balance') {
+                if (!state.accounts.length) return alertMsg('Add an account first (step 1).');
+                if (!val('goal_target') || !date) return alertMsg('Target balance and date are required.');
+                g.link_type = 'account'; g.link_index = Number($('goal_link').value); g.target_amount = val('goal_target'); g.target_date = date;
+            } else if (type === 'contribution_cap') {
+                if (!val('goal_cap') || !date) return alertMsg('Cap and date are required.');
+                g.contribution_limit = val('goal_cap'); g.contributed_so_far = val('goal_sofar') || 0; g.target_date = date;
+                if ($('goal_link').value !== '') { g.link_type = 'account'; g.link_index = Number($('goal_link').value); }
+            } else if (type === 'debt_payoff') {
+                if (!state.debts.length) return alertMsg('Add a debt first (step 2).');
+                if (!date) return alertMsg('Payoff date is required.');
+                g.link_type = 'debt'; g.link_index = Number($('goal_link').value); g.target_amount = 0; g.target_date = date;
+            } else {
+                if (!val('goal_target') || !date) return alertMsg('Target amount and date are required.');
+                g.target_amount = val('goal_target'); g.target_date = date;
+            }
+            state.goals.push(g); $('goal_name').value = ''; renderGoalFields(); renderGoals();
+        }
+        function renderGoals() {
+            $('list_goals').innerHTML = state.goals.map((g, i) => {
+                let detail = g.target_date ? `by ${g.target_date}` : '';
+                if (g.type === 'target_balance') detail = `reach ${money(g.target_amount)} ` + detail;
+                else if (g.type === 'contribution_cap') detail = `cap ${money(g.contribution_limit)} ` + detail;
+                else if (g.type === 'debt_payoff') detail = 'pay off ' + detail;
+                else detail = `save ${money(g.target_amount)} ` + detail;
+                return `<div class="item"><span><span class="name">${g.name}</span><div class="sub">${detail}</div></span><button class="del" onclick="state.goals.splice(${i},1);renderGoals()">Remove</button></div>`;
+            }).join('') || '<div class="empty">No goals yet.</div>';
         }
 
-        document.addEventListener('input', (e) => {
-            if (e.target.classList.contains('category-pct')) {
-                updateAllocationTotal();
+        // --- Step 4: subscriptions ---
+        function addSub() {
+            const name = val('sub_name'), amt = val('sub_amt');
+            if (!name || amt === '') return alertMsg('Subscription name and amount are required.');
+            state.subscriptions.push({ name, amount: amt, cadence: $('sub_cad').value, due_day: val('sub_due') || null });
+            clear('sub_name', 'sub_amt', 'sub_due'); renderSubs();
+        }
+        function renderSubs() {
+            $('list_subs').innerHTML = state.subscriptions.map((s, i) =>
+                `<div class="item"><span><span class="name">${s.name}</span><div class="sub">${money(s.amount)} / ${s.cadence}</div></span><button class="del" onclick="state.subscriptions.splice(${i},1);renderSubs()">Remove</button></div>`
+            ).join('') || '<div class="empty">No subscriptions yet.</div>';
+        }
+
+        // --- Step 6: categories ---
+        function renderCats() {
+            $('list_cats').innerHTML = state.categories.map((c, i) =>
+                `<div class="cat-row">
+                    <input value="${c[0]}" oninput="state.categories[${i}][0]=this.value">
+                    <input type="number" step="0.01" value="${c[1]}" class="catpct" oninput="state.categories[${i}][1]=parseFloat(this.value)||0;updateAlloc()">
+                    <button class="del" onclick="state.categories.splice(${i},1);renderCats();updateAlloc()">&times;</button>
+                </div>`
+            ).join('');
+            updateAlloc();
+        }
+        function addCatRow(name, pct) { state.categories.push([name, pct]); renderCats(); }
+        function allocSum() { return state.categories.reduce((t, c) => t + (Number(c[1]) || 0), 0); }
+        function updateAlloc() {
+            const total = allocSum();
+            $('allocTotal').textContent = total.toFixed(2) + '%';
+            $('allocBox').className = 'alloc-total ' + (Math.abs(total - 100) <= 0.01 ? 'valid' : 'invalid');
+            renderPreview();
+        }
+        function monthlyFactor(c) { return { weekly: 52/12, biweekly: 26/12, semimonthly: 2, monthly: 1, quarterly: 1/3, yearly: 1/12 }[c] || 1; }
+        function renderPreview() {
+            const inc = state.income && state.income.expected_amount ? Number(state.income.expected_amount) * monthlyFactor(state.income.cadence) : 0;
+            const subs = state.subscriptions.reduce((t, s) => t + Number(s.amount) * monthlyFactor(s.cadence), 0);
+            if (!inc) { $('previewBox').innerHTML = '<div class="sub">Set an expected income (step 5) to preview dollar amounts.</div>'; return; }
+            const spendable = Math.max(inc - subs, 0);
+            let rows = `<div class="line"><span>Monthly income</span><span>${money(inc)}</span></div>
+                <div class="line"><span>Subscriptions</span><span>-${money(subs)}</span></div>
+                <div class="line"><span>Goal savings</span><span class="sub">reserved live on dashboard</span></div>
+                <div class="line total"><span>Spendable (before goals)</span><span>${money(spendable)}</span></div>`;
+            state.categories.forEach(c => { rows += `<div class="line"><span>${c[0]}</span><span>${money(spendable * (Number(c[1])||0) / 100)}</span></div>`; });
+            $('previewBox').innerHTML = rows;
+        }
+
+        // --- stepper ---
+        function renderPips() {
+            $('pips').innerHTML = Array.from({ length: TOTAL_STEPS }, (_, i) =>
+                `<div class="step-pip ${i + 1 === step ? 'active' : (i + 1 < step ? 'done' : '')}"></div>`).join('');
+            $('stepTitle').textContent = `Step ${step} of ${TOTAL_STEPS}: ${STEP_TITLES[step - 1]}`;
+        }
+        function showStep(n) {
+            step = n;
+            document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', Number(p.dataset.step) === n));
+            $('backBtn').style.visibility = n === 1 ? 'hidden' : 'visible';
+            $('nextBtn').textContent = n === TOTAL_STEPS ? 'Finish setup' : 'Next';
+            if (n === 3) renderGoalFields();
+            if (n === 6) renderPreview();
+            renderPips();
+        }
+        function prevStep() { if (step > 1) showStep(step - 1); }
+        function nextStep() {
+            if (step === 5) {
+                const amt = val('inc_amt');
+                state.income = amt ? { expected_amount: amt, cadence: $('inc_cad').value } : null;
             }
-        });
-
-        async function completeSetup() {
-            const inputs = document.querySelectorAll('.category-pct');
-            let total = 0;
-            inputs.forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-
-            if (Math.abs(total - 100) > 0.01) {
-                showAlert('Category allocations must total 100%');
-                return;
-            }
-
+            if (step === 6) return finish();
+            showStep(step + 1);
+        }
+        async function finish() {
+            if (Math.abs(allocSum() - 100) > 0.01) return alertMsg('Category percentages must total 100%.');
+            if (!state.categories.length) return alertMsg('Add at least one budget category.');
+            $('nextBtn').disabled = true;
             try {
-                // Add all accounts
-                for (const acc of accounts) {
-                    await fetch('/api/accounts', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            name: acc.name,
-                            institution: acc.institution,
-                            type: acc.type,
-                            balance: acc.balance,
-                            interest_rate: acc.rate,
-                        })
-                    });
-                }
-
-                // Add all debts
-                for (const debt of debts) {
-                    await fetch('/api/debts', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            name: debt.name,
-                            institution: debt.institution,
-                            type: debt.type,
-                            balance: debt.balance,
-                            interest_rate: debt.rate,
-                            min_payment: debt.minPayment,
-                            due_day: debt.dueDay,
-                        })
-                    });
-                }
-
-                // Add categories
-                const categoryNames = document.querySelectorAll('.category-name');
-                const categoryPcts = document.querySelectorAll('.category-pct');
-                const categories = [];
-                for (let i = 0; i < categoryNames.length; i++) {
-                    categories.push([categoryNames[i].value, parseFloat(categoryPcts[i].value)]);
-                }
-
-                await fetch('/api/setup/categories', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ categories })
+                const res = await fetch('/api/setup', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        accounts: state.accounts, debts: state.debts, goals: state.goals,
+                        subscriptions: state.subscriptions, income: state.income, categories: state.categories
+                    })
                 });
-
+                const result = await res.json();
+                if (!res.ok) { $('nextBtn').disabled = false; return alertMsg(result.error || 'Setup failed.'); }
                 window.location.href = '/';
-            } catch (error) {
-                showAlert('Error completing setup: ' + error);
-            }
+            } catch (e) { $('nextBtn').disabled = false; alertMsg('Error: ' + e); }
         }
 
-        updateAllocationTotal();
+        renderAccounts(); renderDebts(); renderGoals(); renderSubs(); renderCats(); showStep(1);
     </script>
 </body>
 </html>

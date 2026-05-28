@@ -1,119 +1,99 @@
 # Budget Program - Web Dashboard
 
-A modern web-based personal budget management system with an interactive dashboard.
+A personal budget app that plans your money by reserving fixed commitments off
+the top, then splitting what's left across spending categories by percentage.
 
 ## Quick Start
 
-### Option 1: Web Dashboard (Recommended)
+1. Install dependencies (first time only):
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-1. Start the web server:
-   ```powershell
+2. Start the web server:
+   ```bash
    python run_web.py
    ```
 
-2. Open your browser and go to:
+3. Open your browser to:
    ```
    http://localhost:5000
    ```
 
-3. Complete the setup wizard to add your accounts, debts, and budget categories
+4. Complete the 6-step setup wizard, then land on the dashboard.
 
-4. You'll be taken to the main dashboard where you can:
-   - View your accounts and net worth
-   - Track debts
-   - Monitor budget categories
-   - Add paychecks
-   - Log expenses
+> A terminal CLI (`python main.py`) also exists and shares the same database,
+> but the web app is the primary interface.
 
-### Option 2: Terminal CLI (Legacy)
+## The budgeting model
 
-If you prefer the command-line interface:
+Money is planned on a **monthly** basis using "reserve off the top":
 
-```powershell
-python main.py
+```
+monthly income
+  − recurring subscriptions
+  − planned goal savings
+  = spendable   →  split across your categories by percentage
 ```
 
-## Features
+- **Income** can be an optional *expected* amount (e.g. $2,000 every 2 weeks),
+  which paces your goals and projects the budget. If your pay is irregular
+  (tips, gig work), skip it and just **log income** whenever it lands — the
+  budget then works off what you've received this month.
+- **Subscriptions** (Netflix, gym, phone, rent) are normalized to a monthly
+  cost and reserved first.
+- **Goals** (reach $10k in your HYSA, max a Roth IRA, pay off a debt by a date)
+  each compute a required monthly contribution that is also reserved.
+- **Categories** (groceries, eating out, gas, clothing, supplements, etc.)
+  split whatever is left. Their percentages must total 100%.
 
-### Dashboard
-- **Summary Card**: Shows total accounts, debts, and net worth
-- **Accounts**: View all accounts with balances
-- **Debts**: Track all debts and their balances
-- **Categories**: Monitor spending by budget category with progress bars
-- **Goals**: Track savings goals
+## Setup wizard (6 steps)
 
-### Quick Actions
-- **Add Account**: Create new bank accounts
-- **Add Debt**: Log credit cards, loans, etc.
-- **Add Paycheck**: Income is automatically allocated to categories
-- **Add Expense**: Track spending against categories
+1. **Accounts** — checking, savings, HYSA, Roth IRA, brokerage, cash
+2. **Debts** — student loans, car loan, credit cards (optional)
+3. **Goals** — what you're working toward (optional)
+4. **Subscriptions** — recurring/consistent spending (optional)
+5. **Income** — optional expected earnings + cadence
+6. **Budget split** — category percentages (must total 100%)
 
-### Setup Wizard
-Step-by-step setup with:
-1. Bank accounts and savings accounts
-2. Debts and credit cards
-3. Budget categories with allocation percentages
+## Dashboard
 
-## Database
+- **Summary** — total accounts, debts, and net worth
+- **Monthly Budget** — income → subscriptions → goal savings → spendable, with
+  per-category planned vs. actually spent this month and progress bars
+- **Accounts** — click a balance to pay an expense or debt from it
+- **Debts**, **Subscriptions**, **Goals**, **Recent Income**, **Recent Expenses**
+- Quick actions: + Income, + Expense, + Subscription, + Goal, + Account, + Debt
 
-The program uses SQLite with the database stored at:
-```
-budget.db
-```
-
-All data is local to your machine - no cloud sync.
-
-## File Structure
+## File structure
 
 ```
 budget_program/
-├── main.py              # Terminal CLI entry point
-├── run_web.py          # Web dashboard entry point
-├── web_app.py          # Flask web application
-├── database.py         # Database helpers and schema
-│
+├── main.py            # Terminal CLI entry point
+├── run_web.py         # Web dashboard entry point
+├── web_app.py         # Flask web application + API
+├── database.py        # Database helpers and schema
+├── requirements.txt   # Python dependencies (Flask)
 ├── services/
-│   ├── allocations.py  # Paycheck allocation logic
-│   ├── goals.py        # Goal tracking
-│   └── reports.py      # Report generation
-│
+│   ├── budget.py      # Budget engine: income, subscriptions, goal reserves, plan
+│   ├── allocations.py # Expense logging + account-to-target payments
+│   ├── goals.py       # Goal tracking and progress
+│   └── reports.py     # Text dashboard/history (CLI)
 ├── templates/
-│   ├── dashboard.html  # Main dashboard page
-│   └── setup.html      # Setup wizard page
-│
-└── budget.db          # SQLite database (created on first run)
+│   ├── dashboard.html # Main dashboard page
+│   └── setup.html     # 6-step setup wizard
+└── budget.db          # SQLite database (created on first run, gitignored)
 ```
-
-## Technology Stack
-
-- **Backend**: Python with Flask
-- **Database**: SQLite
-- **Frontend**: HTML5 + CSS3 + Vanilla JavaScript
-- **No external dependencies for UI** (just Flask for the server)
 
 ## Tips
 
-- Categories must total exactly 100% for paychecks to allocate properly
-- Income from a paycheck is automatically split according to your category percentages
-- Expenses are deducted from category balances
-- You can edit categories from the terminal CLI with `option 6`
+- Category percentages must total exactly 100% — they split *spendable* money,
+  not your whole paycheck.
+- If fixed commitments exceed income, the dashboard warns you that there's
+  nothing left to budget.
+- All data is local SQLite (`budget.db`) — no cloud sync.
 
 ## Troubleshooting
 
-**Port 5000 already in use?**
-Edit `run_web.py` and change `port=5000` to another port like `port=8000`
-
-**Database locked?**
-Make sure you only have one instance of the program running
-
-**Styles not loading?**
-Clear your browser cache (Ctrl+Shift+Del) and refresh
-
-## Future Enhancements
-
-- Charts and visualizations for spending trends
-- Budget vs actual comparisons
-- Recurring expense templates
-- Mobile-responsive design improvements
-- Export to CSV/PDF
-- Multi-user support
+- **Port 5000 in use?** Edit `run_web.py` and change the `port`.
+- **Database locked?** Make sure only one instance is running.

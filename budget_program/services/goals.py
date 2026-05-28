@@ -112,17 +112,6 @@ def _linked_current_amount(goal_row) -> float:
         row = fetchone("SELECT balance FROM debts WHERE id = ?", (link_id,))
         return float(row["balance"]) if row else 0.0
 
-    if link_type == "category" and link_id:
-        row = fetchone(
-            """
-            SELECT
-                COALESCE((SELECT SUM(amount) FROM allocations WHERE category_id = ?), 0) -
-                COALESCE((SELECT SUM(amount) FROM expenses WHERE category_id = ?), 0) AS balance
-            """,
-            (link_id, link_id),
-        )
-        return float(row["balance"]) if row else 0.0
-
     return float(goal_row["current_amount_override"] or 0.0)
 
 
@@ -177,6 +166,7 @@ def get_goal_progress() -> list[dict]:
                 "remaining": round(remaining, 2),
                 "days_remaining": days_remaining,
                 "daily_needed": daily_needed,
+                "monthly_needed": round(daily_needed * 30.44, 2) if daily_needed is not None else None,
                 "status": status,
                 "behind": behind,
                 "progress": progress,
